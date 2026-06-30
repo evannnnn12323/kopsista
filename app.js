@@ -2614,8 +2614,8 @@ window.renderEndOfDayTab = function() {
     const deposits = window.db.getShiftDeposits(todayStr);
     
     let totalTx = txs.length;
-    let totalIncome = txs.reduce((sum, t) => sum + t.total, 0);
-    let totalProfit = txs.reduce((sum, t) => sum + t.totalProfit, 0);
+    let totalIncome = txs.reduce((sum, t) => sum + (t.totalAmount || 0), 0);
+    let totalProfit = txs.reduce((sum, t) => sum + (t.totalProfit || 0), 0);
     
     document.getElementById('eod-total-tx').textContent = totalTx;
     document.getElementById('eod-total-income').textContent = 'Rp ' + totalIncome.toLocaleString('id-ID');
@@ -2645,7 +2645,7 @@ window.renderEndOfDayTab = function() {
     const shifts = ['Shift 1', 'Shift 2', 'Shift 3', 'Di Luar Shift'];
     shifts.forEach(shift => {
         const shiftTxs = txs.filter(t => t.shift === shift);
-        const shiftSystemTotal = shiftTxs.reduce((sum, t) => sum + t.total, 0);
+        const shiftSystemTotal = shiftTxs.reduce((sum, t) => sum + (t.totalAmount || 0), 0);
         
         const shiftDeps = deposits.filter(d => d.shift === shift);
         const shiftManualTotal = shiftDeps.reduce((sum, d) => sum + d.realAmount, 0);

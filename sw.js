@@ -1,4 +1,4 @@
-const CACHE_NAME = 'koperasi-sekolah-v1';
+const CACHE_NAME = 'koperasi-sekolah-v2';
 const ASSETS = [
   './',
   './index.html',
