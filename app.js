@@ -1323,13 +1323,6 @@ window.printInvoice = function() {
 
 // 7. FINANCIAL REPORTS TAB (Chart.js)
 function renderReportsTab() {
-    // Menu End Of Day visibility for Admin or Petugas Inti
-    const endOfDayBtn = document.getElementById('btn-end-of-day');
-    if (state.currentUser.role === 'admin' || state.currentUser.role === 'petugas_inti') {
-        endOfDayBtn.style.display = 'block';
-    } else {
-        endOfDayBtn.style.display = 'none';
-    }
 
     const txs = window.db.getTransactions();
     const products = window.db.getProducts();

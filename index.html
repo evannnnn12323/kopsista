@@ -530,7 +530,7 @@
 
             <!-- SUB-PAGE: ATTENDANCE MANAGEMENT -->
             <div id="admin-page-attendance" class="dashboard-page">
-                <div class="card-header-flex">
+                <div class="card-header-flex" style="margin-bottom: 0.75rem;">
                     <h3>Input Absensi Harian Siswa</h3>
                     <div class="card-header-actions" style="align-items:center; flex-wrap:wrap;">
                         <!-- Admin: date picker editable untuk lihat histori -->
@@ -547,18 +547,20 @@
                         <button class="btn-primary" onclick="saveAttendanceData()"><i data-lucide="save"></i> Simpan Absensi</button>
                         <button id="btn-clear-attendance" class="btn-danger" style="display:none;" onclick="clearAttendanceForDateUI()"><i data-lucide="trash-2"></i> Hapus Semua Absensi</button>
                     </div>
-                    <!-- Admin: Status Hari (Masuk / Libur) -->
-                    <div id="school-day-status-bar" style="display:none; margin-top:0.75rem; padding:0.75rem 1rem; border-radius:8px; background:var(--gray-50); border:1px solid var(--gray-200); align-items:center; flex-wrap:wrap; gap:0.75rem;">
-                        <span style="font-size:0.85rem; font-weight:700; color:var(--gray-600);">Status Hari:</span>
-                        <span id="school-day-badge" style="padding:0.3rem 0.9rem; border-radius:20px; font-size:0.82rem; font-weight:700;"></span>
-                        <span id="school-day-reason" style="font-size:0.82rem; color:var(--gray-500); font-style:italic;"></span>
-                        <div style="margin-left:auto; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
-                            <input type="text" id="school-day-reason-input" class="form-input" placeholder="Alasan libur (opsional)..." style="width:220px; padding:0.35rem 0.75rem; font-size:0.85rem;">
-                            <button class="btn-success" onclick="setSchoolDayStatus('Masuk')" style="padding:0.35rem 0.85rem; font-size:0.85rem;"><i data-lucide="check-circle"></i> Tandai Masuk</button>
-                            <button class="btn-danger" onclick="setSchoolDayStatus('Libur')" style="padding:0.35rem 0.85rem; font-size:0.85rem;"><i data-lucide="x-circle"></i> Tandai Libur</button>
-                        </div>
+                </div>
+
+                <!-- Admin: Status Hari (Masuk / Libur) -->
+                <div id="school-day-status-bar" style="display:none; margin-bottom:1.5rem; padding:0.75rem 1rem; border-radius:8px; background:var(--gray-50); border:1px solid var(--gray-200); align-items:center; flex-wrap:wrap; gap:0.75rem;">
+                    <span style="font-size:0.85rem; font-weight:700; color:var(--gray-600);">Status Hari:</span>
+                    <span id="school-day-badge" style="padding:0.3rem 0.9rem; border-radius:20px; font-size:0.82rem; font-weight:700;"></span>
+                    <span id="school-day-reason" style="font-size:0.82rem; color:var(--gray-500); font-style:italic;"></span>
+                    <div style="margin-left:auto; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+                        <input type="text" id="school-day-reason-input" class="form-input" placeholder="Alasan libur (opsional)..." style="width:220px; padding:0.35rem 0.75rem; font-size:0.85rem;">
+                        <button class="btn-success" onclick="setSchoolDayStatus('Masuk')" style="padding:0.35rem 0.85rem; font-size:0.85rem;"><i data-lucide="check-circle"></i> Tandai Masuk</button>
+                        <button class="btn-danger" onclick="setSchoolDayStatus('Libur')" style="padding:0.35rem 0.85rem; font-size:0.85rem;"><i data-lucide="x-circle"></i> Tandai Libur</button>
                     </div>
                 </div>
+
                 
                 <div class="table-responsive">
                     <table class="custom-table">
