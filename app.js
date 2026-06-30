@@ -296,6 +296,7 @@ function switchAdminTab(tabName) {
         'consignment': 'Sistem Barang Titipan Siswa (Konsinyasi)',
         'reports': 'Laporan Keuangan',
         'logs': 'Audit Log Aktivitas',
+        'about': 'Tentang Aplikasi',
         'settings': 'Pengaturan Sistem'
     };
     const headerTitle = document.getElementById('admin-header-title');
@@ -317,6 +318,7 @@ function switchAdminTab(tabName) {
         'consignment': renderConsignmentTab,
         'reports': renderReportsTab,
         'logs': renderLogsTab,
+        'about': renderAboutTab,
         'settings': renderSettingsTab,
     };
     if (renderMap[tabName]) {
@@ -355,6 +357,7 @@ function switchSiswaTab(tabName) {
     else if (tabName === 'consignment') renderSiswaConsignment();
     else if (tabName === 'attendance') renderSiswaAttendance();
     else if (tabName === 'profile') renderSiswaProfile();
+    else if (tabName === 'about') renderAboutTab();
 }
 
 // ================= ADMIN FUNCTIONS =================
@@ -1524,6 +1527,16 @@ function renderSettingsTab() {
     document.getElementById('settings-coop').value = settings.coopName;
     document.getElementById('settings-address').value = settings.address;
     document.getElementById('settings-phone').value = settings.phone;
+
+    // Developer profile inputs
+    const devNameInput = document.getElementById('settings-dev-name');
+    if (devNameInput) devNameInput.value = settings.developerName || '';
+    const devBioInput = document.getElementById('settings-dev-bio');
+    if (devBioInput) devBioInput.value = settings.developerBio || '';
+    const devContactInput = document.getElementById('settings-dev-contact');
+    if (devContactInput) devContactInput.value = settings.developerContact || '';
+    const devSocialInput = document.getElementById('settings-dev-social');
+    if (devSocialInput) devSocialInput.value = settings.developerSocial || '';
 }
 
 window.saveSystemSettings = function(e) {
@@ -1540,6 +1553,45 @@ window.saveSystemSettings = function(e) {
     window.db.saveSettings({ schoolName, coopName, address, phone });
     showToast("Pengaturan sistem berhasil disimpan!");
 };
+
+window.saveDeveloperSettings = function() {
+    const developerName = document.getElementById('settings-dev-name').value.trim();
+    const developerBio = document.getElementById('settings-dev-bio').value.trim();
+    const developerContact = document.getElementById('settings-dev-contact').value.trim();
+    const developerSocial = document.getElementById('settings-dev-social').value.trim();
+
+    if (!developerName) {
+        showToast("Nama Pengembang wajib diisi!", "error");
+        return;
+    }
+
+    window.db.saveSettings({ developerName, developerBio, developerContact, developerSocial });
+    showToast("Profil Pengembang berhasil disimpan!");
+    renderAboutTab();
+};
+
+function renderAboutTab() {
+    const settings = window.db.getSettings();
+    
+    // Update Admin View fields
+    const adminCoop = document.getElementById('about-coop-name');
+    if (adminCoop) adminCoop.textContent = settings.coopName;
+    const adminDev = document.getElementById('about-dev-name');
+    if (adminDev) adminDev.textContent = settings.developerName || "Yanuar Evanto";
+    const adminBio = document.getElementById('about-dev-bio');
+    if (adminBio) adminBio.textContent = settings.developerBio || "";
+    const adminContact = document.getElementById('about-dev-contact');
+    if (adminContact) adminContact.textContent = settings.developerContact || "";
+    const adminSocial = document.getElementById('about-dev-social');
+    if (adminSocial) adminSocial.textContent = settings.developerSocial || "";
+
+    // Update Siswa View fields
+    document.querySelectorAll('.about-coop-name-shared').forEach(el => el.textContent = settings.coopName);
+    document.querySelectorAll('.about-dev-name-shared').forEach(el => el.textContent = settings.developerName || "Yanuar Evanto");
+    document.querySelectorAll('.about-dev-bio-shared').forEach(el => el.textContent = settings.developerBio || "");
+    document.querySelectorAll('.about-dev-contact-shared').forEach(el => el.textContent = settings.developerContact || "");
+    document.querySelectorAll('.about-dev-social-shared').forEach(el => el.textContent = settings.developerSocial || "");
+}
 
 window.exportDatabase = function() {
     window.db.exportDatabase();

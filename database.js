@@ -18,7 +18,11 @@ const DEFAULT_DATA = {
         coopName: "Koperasi THHK",
         address: "Jl. Pendidikan No. 12, Tegal",
         phone: "(0283) 351234",
-        logo: "school_logo.png"
+        logo: "school_logo.png",
+        developerName: "Yanuar Evanto",
+        developerBio: "Pengembang sistem Koperasi THHK & Absensi Siswa.",
+        developerContact: "0812-3456-7890",
+        developerSocial: "@yanuar_evanto"
     },
     users: [
         // ============ ADMIN ============
@@ -303,6 +307,15 @@ class KoperasiDB {
                 }
             }
         });
+
+        if (!data.settings.developerName) {
+            data.settings.developerName = "Yanuar Evanto";
+            data.settings.developerBio = "Pengembang sistem Koperasi THHK & Absensi Siswa.";
+            data.settings.developerContact = "0812-3456-7890";
+            data.settings.developerSocial = "@yanuar_evanto";
+            changed = true;
+        }
+
 
         if (changed) {
             this.saveData(data);

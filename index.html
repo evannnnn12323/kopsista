@@ -214,6 +214,11 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
+                    <a class="sidebar-link" data-tab="about">
+                        <i data-lucide="info"></i> Tentang Aplikasi
+                    </a>
+                </li>
+                <li class="sidebar-item">
                     <a class="sidebar-link" data-tab="settings">
                         <i data-lucide="settings"></i> Pengaturan Sistem
                     </a>
@@ -898,31 +903,84 @@
                 </div>
             </div>
 
+            <!-- SUB-PAGE: ABOUT APP (ADMIN) -->
+            <div id="admin-page-about" class="dashboard-page">
+                <div style="border-bottom:1.5px solid var(--gray-100); padding-bottom: 0.75rem; margin-bottom:1.5rem;">
+                    <p style="color:var(--text-secondary);">Informasi mengenai sistem aplikasi Koperasi THHK dan tim pengembang.</p>
+                </div>
+                <div class="dashboard-column-card" style="max-width: 600px; margin: 0 auto; padding: 2rem;">
+                    <div style="text-align:center; margin-bottom: 1.5rem;">
+                        <img src="school_logo.png" alt="Logo Koperasi" style="width:80px; height:80px; border-radius:50%; background:var(--primary-light); padding:4px; margin-bottom:1rem;">
+                        <h2 style="font-weight:700; color:var(--primary-dark); font-size:1.5rem;" id="about-coop-name">Koperasi THHK</h2>
+                        <span class="badge present" style="margin-top:0.5rem; display:inline-block;">Versi 3.0 (Aktif)</span>
+                    </div>
+                    <div style="border-top: 1px solid var(--gray-100); padding-top:1.5rem;">
+                        <h4 style="font-weight:700; margin-bottom:0.75rem; color:var(--gray-700);"><i data-lucide="code" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;"></i> Pengembang Aplikasi</h4>
+                        <div style="background:var(--gray-50); border:1px solid var(--gray-200); border-radius:8px; padding:1.25rem; margin-bottom:1.5rem; text-align:left;">
+                            <div style="font-weight:700; font-size:1.05rem; color:var(--dark);" id="about-dev-name">Yanuar Evanto</div>
+                            <div style="font-size:0.85rem; color:var(--gray-600); margin:0.35rem 0 0.75rem 0;" id="about-dev-bio">Pengembang sistem Koperasi THHK & Absensi Siswa.</div>
+                            <div style="display:flex; flex-wrap:wrap; gap:1rem; font-size:0.82rem; border-top:1px solid var(--gray-200); padding-top:0.75rem;">
+                                <span style="color:var(--gray-500);"><strong style="color:var(--dark);">No. HP/WA:</strong> <span id="about-dev-contact">0812-3456-7890</span></span>
+                                <span style="color:var(--gray-500);"><strong style="color:var(--dark);">Social Media:</strong> <span id="about-dev-social">@yanuar_evanto</span></span>
+                            </div>
+                        </div>
+                        <p style="font-size:0.8rem; color:var(--gray-400); text-align:center; margin-top:2rem;">Hak Cipta &copy; 2026 Koperasi THHK Tegal. Dilindungi Undang-Undang.</p>
+                    </div>
+                </div>
+            </div>
+
             <!-- SUB-PAGE: SYSTEM SETTINGS -->
             <div id="admin-page-settings" class="dashboard-page">
                 <div class="settings-layout">
-                    <!-- School Coop Profiling -->
-                    <div class="dashboard-column-card">
-                        <h3 style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--gray-100); padding-bottom: 0.5rem;">Identitas Sekolah & Koperasi</h3>
-                        <form id="settings-form" onsubmit="event.preventDefault(); saveSystemSettings();">
-                            <div class="form-group">
-                                <label class="form-label" for="settings-school">Nama Sekolah</label>
-                                <input type="text" id="settings-school" class="form-input" style="padding-left:1rem;" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="settings-coop">Nama Koperasi</label>
-                                <input type="text" id="settings-coop" class="form-input" style="padding-left:1rem;" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="settings-address">Alamat Koperasi</label>
-                                <input type="text" id="settings-address" class="form-input" style="padding-left:1rem;" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="settings-phone">No. Telepon / Kontak</label>
-                                <input type="text" id="settings-phone" class="form-input" style="padding-left:1rem;" required>
-                            </div>
-                            <button type="submit" class="btn-primary" style="width:100%; justify-content:center; padding:0.75rem;"><i data-lucide="save"></i> Simpan Pengaturan</button>
-                        </form>
+                    <!-- Left Column: Forms -->
+                    <div style="display:flex; flex-direction:column; gap:2rem;">
+                        <!-- School Coop Profiling -->
+                        <div class="dashboard-column-card">
+                            <h3 style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--gray-100); padding-bottom: 0.5rem;">Identitas Sekolah & Koperasi</h3>
+                            <form id="settings-form" onsubmit="event.preventDefault(); saveSystemSettings();">
+                                <div class="form-group">
+                                    <label class="form-label" for="settings-school">Nama Sekolah</label>
+                                    <input type="text" id="settings-school" class="form-input" style="padding-left:1rem;" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="settings-coop">Nama Koperasi</label>
+                                    <input type="text" id="settings-coop" class="form-input" style="padding-left:1rem;" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="settings-address">Alamat Koperasi</label>
+                                    <input type="text" id="settings-address" class="form-input" style="padding-left:1rem;" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="settings-phone">No. Telepon / Kontak</label>
+                                    <input type="text" id="settings-phone" class="form-input" style="padding-left:1rem;" required>
+                                </div>
+                                <button type="submit" class="btn-primary" style="width:100%; justify-content:center; padding:0.75rem;"><i data-lucide="save"></i> Simpan Identitas</button>
+                            </form>
+                        </div>
+
+                        <!-- Developer Profiling -->
+                        <div class="dashboard-column-card">
+                            <h3 style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--gray-100); padding-bottom: 0.5rem;">Profil Pengembang Aplikasi</h3>
+                            <form id="settings-dev-form" onsubmit="event.preventDefault(); saveDeveloperSettings();">
+                                <div class="form-group">
+                                    <label class="form-label" for="settings-dev-name">Nama Pengembang (Developer)</label>
+                                    <input type="text" id="settings-dev-name" class="form-input" style="padding-left:1rem;" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="settings-dev-bio">Deskripsi / Tentang Pengembang</label>
+                                    <input type="text" id="settings-dev-bio" class="form-input" style="padding-left:1rem;" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="settings-dev-contact">No. HP / Kontak WA</label>
+                                    <input type="text" id="settings-dev-contact" class="form-input" style="padding-left:1rem;" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="settings-dev-social">Media Sosial (misal: Instagram)</label>
+                                    <input type="text" id="settings-dev-social" class="form-input" style="padding-left:1rem;" required>
+                                </div>
+                                <button type="submit" class="btn-primary" style="width:100%; justify-content:center; padding:0.75rem;"><i data-lucide="save"></i> Simpan Profil Pengembang</button>
+                            </form>
+                        </div>
                     </div>
 
                     <!-- Backup and Restore Panel -->
@@ -968,6 +1026,7 @@
                 <li><a class="siswa-nav-link" data-tab="consignment"><i data-lucide="badge-percent"></i> Titipan Saya</a></li>
                 <li><a class="siswa-nav-link" data-tab="attendance"><i data-lucide="calendar-check-2"></i> Kehadiran Saya</a></li>
                 <li><a class="siswa-nav-link" data-tab="profile"><i data-lucide="user-cog"></i> Profil & Akun</a></li>
+                <li><a class="siswa-nav-link" data-tab="about"><i data-lucide="info"></i> Tentang Aplikasi</a></li>
             </ul>
 
             <div style="display:flex; align-items:center; gap:1.5rem;">
@@ -1190,6 +1249,33 @@
                                 </tbody>
                             </table>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB-PAGE: ABOUT APP (SISWA) -->
+            <div id="siswa-page-about" class="dashboard-page">
+                <div style="border-bottom:1.5px solid var(--gray-100); padding-bottom: 0.75rem; margin-bottom:1.5rem;">
+                    <h2 style="font-weight:700;">Tentang Aplikasi</h2>
+                    <p style="color:var(--gray-500); font-size:0.9rem;">Informasi sistem aplikasi dan profil pengembang.</p>
+                </div>
+                <div class="dashboard-column-card" style="max-width: 600px; margin: 0 auto; padding: 2rem;">
+                    <div style="text-align:center; margin-bottom: 1.5rem;">
+                        <img src="school_logo.png" alt="Logo Koperasi" style="width:80px; height:80px; border-radius:50%; background:var(--primary-light); padding:4px; margin-bottom:1rem;">
+                        <h2 style="font-weight:700; color:var(--primary-dark); font-size:1.5rem;" class="about-coop-name-shared">Koperasi THHK</h2>
+                        <span class="badge present" style="margin-top:0.5rem; display:inline-block;">Versi 3.0 (Aktif)</span>
+                    </div>
+                    <div style="border-top: 1px solid var(--gray-100); padding-top:1.5rem;">
+                        <h4 style="font-weight:700; margin-bottom:0.75rem; color:var(--gray-700);"><i data-lucide="code" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;"></i> Pengembang Aplikasi</h4>
+                        <div style="background:var(--gray-50); border:1px solid var(--gray-200); border-radius:8px; padding:1.25rem; margin-bottom:1.5rem; text-align:left;">
+                            <div style="font-weight:700; font-size:1.05rem; color:var(--dark);" class="about-dev-name-shared">Yanuar Evanto</div>
+                            <div style="font-size:0.85rem; color:var(--gray-600); margin:0.35rem 0 0.75rem 0;" class="about-dev-bio-shared">Pengembang sistem Koperasi THHK & Absensi Siswa.</div>
+                            <div style="display:flex; flex-wrap:wrap; gap:1rem; font-size:0.82rem; border-top:1px solid var(--gray-200); padding-top:0.75rem;">
+                                <span style="color:var(--gray-500);"><strong style="color:var(--dark);">No. HP/WA:</strong> <span class="about-dev-contact-shared">0812-3456-7890</span></span>
+                                <span style="color:var(--gray-500);"><strong style="color:var(--dark);">Social Media:</strong> <span class="about-dev-social-shared">@yanuar_evanto</span></span>
+                            </div>
+                        </div>
+                        <p style="font-size:0.8rem; color:var(--gray-400); text-align:center; margin-top:2rem;">Hak Cipta &copy; 2026 Koperasi THHK Tegal. Dilindungi Undang-Undang.</p>
                     </div>
                 </div>
             </div>
