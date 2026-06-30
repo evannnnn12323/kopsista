@@ -1,4 +1,4 @@
-const CACHE_NAME = 'koperasi-sekolah-v2';
+const CACHE_NAME = 'koperasi-sekolah-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -9,46 +9,27 @@ const ASSETS = [
   './login_illustration.png'
 ];
 
-// Install Event - Caching Assets
+// Install Event - Skip waiting immediately
 self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('Caching app shell and assets...');
-        return cache.addAll(ASSETS);
-      })
-      .then(() => self.skipWaiting())
-  );
+  event.waitUntil(self.skipWaiting());
 });
 
-// Activate Event - Cleaning Up Old Caches
+// Activate Event - Clean ALL old caches & claim clients
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys => {
-      return Promise.all(
-        keys.map(key => {
-          if (key !== CACHE_NAME) {
-            console.log('Removing old cache:', key);
-            return caches.delete(key);
-          }
-        })
-      );
+      return Promise.all(keys.map(key => caches.delete(key)));
     }).then(() => self.clients.claim())
   );
 });
 
-// Fetch Event - Serve Cache or Network
+// Fetch Event - NETWORK FIRST (always get fresh content)
 self.addEventListener('fetch', event => {
-  // Hanya intercept request HTTP/HTTPS (hindari chrome-extension atau file://)
   if (event.request.url.startsWith('http')) {
     event.respondWith(
-      caches.match(event.request).then(cachedResponse => {
-        return cachedResponse || fetch(event.request).catch(() => {
-          // Fallback jika offline dan aset tidak di-cache
-          if (event.request.mode === 'navigate') {
-            return caches.match('./index.html');
-          }
-        });
+      fetch(event.request).catch(() => {
+        // Only use cache as fallback when completely offline
+        return caches.match(event.request);
       })
     );
   }

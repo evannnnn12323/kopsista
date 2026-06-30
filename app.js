@@ -252,18 +252,31 @@ function switchAdminTab(tabName) {
     document.getElementById(`admin-page-${tabName}`).classList.add('active');
 
     // Run tab specific renders
-    if (tabName === 'dashboard') renderAdminDashboard();
-    else if (tabName === 'users') renderUsersTab();
-    else if (tabName === 'students') renderStudentsTab();
-    else if (tabName === 'attendance') renderAttendanceTab();
-    else if (tabName === 'petugas-attendance') renderPetugasAttendanceTab();
-    else if (tabName === 'products') renderProductsTab();
-    else if (tabName === 'pos') renderPOSTab();
-    else if (tabName === 'endofday') renderEndOfDayTab();
-    else if (tabName === 'consignment') renderConsignmentTab();
-    else if (tabName === 'reports') renderReportsTab();
-    else if (tabName === 'logs') renderLogsTab();
-    else if (tabName === 'settings') renderSettingsTab();
+    const renderMap = {
+        'dashboard': renderAdminDashboard,
+        'users': renderUsersTab,
+        'students': renderStudentsTab,
+        'attendance': renderAttendanceTab,
+        'petugas-attendance': renderPetugasAttendanceTab,
+        'products': renderProductsTab,
+        'pos': renderPOSTab,
+        'endofday': renderEndOfDayTab,
+        'consignment': renderConsignmentTab,
+        'reports': renderReportsTab,
+        'logs': renderLogsTab,
+        'settings': renderSettingsTab,
+    };
+    if (renderMap[tabName]) {
+        try {
+            renderMap[tabName]();
+        } catch(e) {
+            console.error('Error rendering tab', tabName, e);
+            document.getElementById(`admin-page-${tabName}`).innerHTML =
+                `<div style="padding:2rem; color:red; background:#fff3f3; border-radius:8px; margin:1rem;">
+                    <strong>⚠️ Terjadi error saat memuat halaman ini:</strong><br><pre style="font-size:0.8rem;white-space:pre-wrap;">${e.message}</pre>
+                </div>`;
+        }
+    }
 }
 
 function switchSiswaTab(tabName) {
