@@ -264,6 +264,18 @@ class KoperasiDB {
             changed = true;
         }
 
+        // Re-seed siswa jika kosong (akibat localStorage lama / data hilang)
+        if (!data.students || data.students.length === 0) {
+            data.students = JSON.parse(JSON.stringify(DEFAULT_DATA.students));
+            changed = true;
+        }
+
+        // Re-seed produk jika kosong (akibat localStorage lama / data hilang)
+        if (!data.products || data.products.length === 0) {
+            data.products = JSON.parse(JSON.stringify(DEFAULT_DATA.products));
+            changed = true;
+        }
+
         // Jangan hapus akun yang dibuat secara manual (misal Anggota Kopsis)
         // Kita hanya mengupdate data akun bawaan jika ada perubahan role
 

@@ -1502,13 +1502,45 @@
     <script src="database.js"></script>
     <script src="app.js"></script>
 
-    <!-- PWA Service Worker Registration -->
+    <!-- PWA Service Worker Registration - Auto Update -->
     <script>
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('Service Worker registered successfully!', reg))
-                    .catch(err => console.log('Service Worker registration failed: ', err));
+            window.addEventListener('load', async () => {
+                try {
+                    // Unregister semua SW lama supaya selalu pakai versi terbaru
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    for (const reg of registrations) {
+                        // Jika bukan sw.js terbaru, unregister
+                        if (reg.active && !reg.active.scriptURL.includes('sw.js')) {
+                            await reg.unregister();
+                        }
+                    }
+
+                    // Daftarkan SW terbaru
+                    const reg = await navigator.serviceWorker.register('./sw.js');
+
+                    // Jika ada update (SW baru menunggu), langsung aktifkan & reload
+                    reg.addEventListener('updatefound', () => {
+                        const newWorker = reg.installing;
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'activated') {
+                                // Reload otomatis saat SW baru aktif
+                                window.location.reload();
+                            }
+                        });
+                    });
+
+                    // Force update check setiap kali halaman dimuat
+                    reg.update();
+
+                } catch (err) {
+                    console.log('Service Worker error:', err);
+                }
+            });
+
+            // Jika SW baru mengambil alih kontrol, reload otomatis
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                window.location.reload();
             });
         }
     </script>
