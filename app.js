@@ -695,7 +695,13 @@ function renderAttendanceTab() {
     const todayStr = new Date().toISOString().slice(0, 10);
     const dateInput = document.getElementById('attendance-date-picker');
     if (!dateInput.value) dateInput.value = todayStr;
-    
+
+    // Tampilkan tombol hapus hanya untuk admin
+    const clearBtn = document.getElementById('btn-clear-attendance');
+    if (clearBtn) {
+        clearBtn.style.display = (state.currentUser && state.currentUser.role === 'admin') ? 'inline-flex' : 'none';
+    }
+
     loadAttendanceForDate(dateInput.value);
 }
 
@@ -708,12 +714,16 @@ function loadAttendanceForDate(dateStr) {
     const students = window.db.getStudents();
     const attendance = window.db.getAttendance().filter(a => a.date === dateStr);
     const tbody = document.getElementById('attendance-table-body');
-    
+    const isAdmin = state.currentUser && state.currentUser.role === 'admin';
+
     tbody.innerHTML = students.map(s => {
         const record = attendance.find(a => a.studentId === s.id);
-        const status = record ? record.status : 'Hadir'; // Default 'Hadir'
+        const status = record ? record.status : 'Hadir';
         const reason = record ? (record.reason || '') : '';
-        
+        const deleteBtn = isAdmin && record
+            ? `<td><button class="btn-danger" style="padding:0.25rem 0.6rem; font-size:0.8rem;" onclick="deleteAttendanceRecord('${dateStr}','${s.id}')" title="Hapus absensi siswa ini"><i data-lucide="trash-2" style="width:14px;height:14px;"></i></button></td>`
+            : (isAdmin ? `<td></td>` : '');
+
         return `
             <tr>
                 <td><strong>${s.id}</strong></td>
@@ -738,9 +748,26 @@ function loadAttendanceForDate(dateStr) {
                 <td>
                     <input type="text" class="form-input sa-reason-input" value="${reason}" placeholder="Keterangan..." style="padding:0.35rem; width:130px; font-size:0.85rem;" data-studentid="${s.id}">
                 </td>
+                ${deleteBtn}
             </tr>
         `;
     }).join('');
+
+    // Update table header to include Hapus column for admin
+    const thead = tbody.closest('table').querySelector('thead tr');
+    if (thead) {
+        const existingHapusTh = thead.querySelector('.th-hapus');
+        if (isAdmin && !existingHapusTh) {
+            const th = document.createElement('th');
+            th.className = 'th-hapus';
+            th.textContent = 'Hapus';
+            thead.appendChild(th);
+        } else if (!isAdmin && existingHapusTh) {
+            existingHapusTh.remove();
+        }
+    }
+
+    safeCreateIcons();
 }
 
 window.saveAttendanceData = function() {
@@ -764,6 +791,26 @@ window.saveAttendanceData = function() {
     } else {
         showToast("Gagal menyimpan absensi.", "error");
     }
+};
+
+window.deleteAttendanceRecord = function(date, studentId) {
+    if (!confirm(`Hapus data absensi siswa ${studentId} untuk tanggal ${date}?`)) return;
+    const res = window.db.deleteStudentAttendanceRecord(date, studentId);
+    if (res.success) {
+        showToast('Absensi siswa berhasil dihapus!');
+        loadAttendanceForDate(date);
+    } else {
+        showToast(res.message || 'Gagal menghapus.', 'error');
+    }
+};
+
+window.clearAttendanceForDateUI = function() {
+    const dateStr = document.getElementById('attendance-date-picker').value;
+    if (!dateStr) { showToast('Pilih tanggal terlebih dahulu.', 'error'); return; }
+    if (!confirm(`Hapus SEMUA data absensi tanggal ${dateStr}? Tindakan ini tidak bisa dibatalkan!`)) return;
+    const res = window.db.clearAttendanceForDate(dateStr);
+    showToast(`${res.count} data absensi tanggal ${dateStr} berhasil dihapus.`);
+    loadAttendanceForDate(dateStr);
 };
 
 // 5. GOODS & COOPERATIVE ITEMS MANAGEMENT

@@ -477,6 +477,25 @@ class KoperasiDB {
         return { success: true };
     }
 
+    deleteStudentAttendanceRecord(date, studentId) {
+        const data = this.getData();
+        const before = data.attendance.length;
+        data.attendance = data.attendance.filter(a => !(a.date === date && a.studentId === studentId));
+        if (data.attendance.length === before) return { success: false, message: 'Data tidak ditemukan.' };
+        this.saveData(data);
+        this.addAuditLog("admin", "admin", "Hapus Absensi Siswa", `Menghapus absensi siswa ${studentId} tanggal ${date}`);
+        return { success: true };
+    }
+
+    clearAttendanceForDate(date) {
+        const data = this.getData();
+        const count = data.attendance.filter(a => a.date === date).length;
+        data.attendance = data.attendance.filter(a => a.date !== date);
+        this.saveData(data);
+        this.addAuditLog("admin", "admin", "Hapus Semua Absensi", `Menghapus ${count} data absensi tanggal ${date}`);
+        return { success: true, count };
+    }
+
     getStudentAttendanceStats(studentId) {
         const data = this.getData();
         const records = data.attendance.filter(a => a.studentId === studentId);
