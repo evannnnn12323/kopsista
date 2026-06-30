@@ -2590,10 +2590,13 @@ window.loadPetugasAttendanceForm = function() {
         let gaji = 0;
         let reason = '';
         
+        const isInti = u.role === 'petugas_inti';
+        const defaultGaji = isInti ? 5000 : (window.db.getData().settings.gajiPetugasPerPertemuan || window.GAJI_PER_PERTEMUAN || 3000);
+
         if (record) {
             status = record.status;
             sigData = record.signatureData;
-            gaji = record.gaji;
+            gaji = record.gaji !== undefined ? record.gaji : (status === 'Hadir' ? defaultGaji : 0);
             reason = record.reason || '';
         }
         
@@ -2601,11 +2604,11 @@ window.loadPetugasAttendanceForm = function() {
         if (tempSignatures[u.username]) {
             sigData = tempSignatures[u.username];
             status = 'Hadir'; // Jika ditandatangani, otomatis set Hadir
-            gaji = window.db.getData().settings.gajiPetugasPerPertemuan || window.GAJI_PER_PERTEMUAN || 3000;
+            gaji = defaultGaji;
         }
 
         const isHadir = (status === 'Hadir');
-        const formattedGaji = isHadir ? (window.db.getData().settings.gajiPetugasPerPertemuan || window.GAJI_PER_PERTEMUAN || 3000) : 0;
+        const formattedGaji = isHadir ? defaultGaji : 0;
 
         // Petugas hanya bisa menginput/mengedit barisnya sendiri. Admin bisa mengedit semua baris.
         const currentUser = state.currentUser;
@@ -2692,7 +2695,9 @@ window.handlePaStatusChange = function(selectEl, username) {
     const gajiCell = tr.querySelector('.pa-gaji-cell');
     const actionCell = tr.cells[6];
     
-    const gajiPertemuan = window.db.getData().settings.gajiPetugasPerPertemuan || window.GAJI_PER_PERTEMUAN || 3000;
+    const userObj = window.db.getData().users.find(u => u.username === username);
+    const isInti = userObj && userObj.role === 'petugas_inti';
+    const gajiPertemuan = isInti ? 5000 : (window.db.getData().settings.gajiPetugasPerPertemuan || window.GAJI_PER_PERTEMUAN || 3000);
 
     const isSelf = (state.currentUser.role === 'admin' || state.currentUser.username === username);
 

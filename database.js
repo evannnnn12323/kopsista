@@ -942,7 +942,9 @@ class KoperasiDB {
 
         records.forEach(rec => {
             const id = "PA-" + date.replace(/-/g, '') + "-" + rec.username;
-            const gajiPertemuan = data.settings.gajiPetugasPerPertemuan || GAJI_PER_PERTEMUAN;
+            const userObj = data.users.find(u => u.username === rec.username);
+            const isInti = userObj && userObj.role === 'petugas_inti';
+            const gajiPertemuan = isInti ? 5000 : (data.settings.gajiPetugasPerPertemuan || GAJI_PER_PERTEMUAN);
             data.petugasAttendance.push({
                 id,
                 date,
@@ -979,8 +981,11 @@ class KoperasiDB {
                 summary[rec.username] = { username: rec.username, name: rec.name, totalHadir: 0, totalGaji: 0 };
             }
             if (rec.status === 'Hadir') {
+                const userObj = data.users.find(u => u.username === rec.username);
+                const isInti = userObj && userObj.role === 'petugas_inti';
+                const defaultGaji = isInti ? 5000 : (data.settings.gajiPetugasPerPertemuan || GAJI_PER_PERTEMUAN);
                 summary[rec.username].totalHadir++;
-                summary[rec.username].totalGaji += (rec.gaji || gajiPertemuan);
+                summary[rec.username].totalGaji += (rec.gaji !== undefined ? rec.gaji : defaultGaji);
             }
         });
 
@@ -1071,7 +1076,9 @@ class KoperasiDB {
         data.petugasAttendance = data.petugasAttendance.filter(r => !(r.date === req.date && r.username === req.username));
         
         const id = "PA-" + req.date.replace(/-/g, '') + "-" + req.username;
-        const gajiPertemuan = data.settings.gajiPetugasPerPertemuan || GAJI_PER_PERTEMUAN;
+        const userObj = data.users.find(u => u.username === req.username);
+        const isInti = userObj && userObj.role === 'petugas_inti';
+        const gajiPertemuan = isInti ? 5000 : (data.settings.gajiPetugasPerPertemuan || GAJI_PER_PERTEMUAN);
 
         data.petugasAttendance.push({
             id,
