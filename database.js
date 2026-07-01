@@ -35,6 +35,16 @@ const DEFAULT_DATA = {
             photo: "",
             isActive: true
         },
+        {
+            username: "kepsek",
+            passwordHash: hashPassword("kepsek123"),
+            role: "admin",
+            name: "Kepala Sekolah THHK",
+            jabatan: "Kepala Sekolah",
+            photo: "",
+            isActive: true
+        },
+
         // ============ PETUGAS KOPSIS INTI ============
         {
             username: "jeisen",
