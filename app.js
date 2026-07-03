@@ -488,7 +488,7 @@ function renderAttendanceApprovals() {
 window.approvePaRequest = function(requestId) {
     const res = window.db.approvePetugasAttendanceRequest(requestId);
     if (res.success) {
-        showToast("Absensi petugas disetujui.");
+        showToast("Absensi petugas inti disetujui.");
         renderAdminDashboard();
     } else {
         showToast(res.message, "error");
@@ -499,7 +499,7 @@ window.rejectPaRequest = function(requestId) {
     if (confirm("Apakah Anda yakin ingin menolak pengajuan absensi ini?")) {
         const res = window.db.rejectPetugasAttendanceRequest(requestId);
         if (res.success) {
-            showToast("Absensi petugas ditolak.");
+            showToast("Absensi petugas inti ditolak.");
             renderAdminDashboard();
         } else {
             showToast(res.message, "error");
@@ -854,7 +854,7 @@ function loadAttendanceForDate(dateStr) {
         const status = record ? record.status : 'Hadir';
         const reason = record ? (record.reason || '') : '';
         const deleteBtn = isAdmin && record
-            ? `<td><button class="btn-danger" style="padding:0.25rem 0.6rem; font-size:0.8rem;" onclick="deleteAttendanceRecord('${dateStr}','${s.id}')" title="Hapus absensi siswa ini"><i data-lucide="trash-2" style="width:14px;height:14px;"></i></button></td>`
+            ? `<td><button class="btn-danger" style="padding:0.25rem 0.6rem; font-size:0.8rem;" onclick="deleteAttendanceRecord('${dateStr}','${s.id}')" title="Hapus absensi anggota kopsis ini"><i data-lucide="trash-2" style="width:14px;height:14px;"></i></button></td>`
             : (isAdmin ? `<td></td>` : '');
 
         return `
@@ -927,10 +927,10 @@ window.saveAttendanceData = function() {
 };
 
 window.deleteAttendanceRecord = function(date, studentId) {
-    if (!confirm(`Hapus data absensi siswa ${studentId} untuk tanggal ${date}?`)) return;
+    if (!confirm(`Hapus data absensi anggota kopsis ${studentId} untuk tanggal ${date}?`)) return;
     const res = window.db.deleteStudentAttendanceRecord(date, studentId);
     if (res.success) {
-        showToast('Absensi siswa berhasil dihapus!');
+        showToast('Absensi anggota kopsis berhasil dihapus!');
         loadAttendanceForDate(date);
     } else {
         showToast(res.message || 'Gagal menghapus.', 'error');
@@ -2904,12 +2904,12 @@ window.savePetugasAttendanceForm = function() {
 
     const res = window.db.savePetugasAttendance(dateStr, records);
     if (res.success) {
-        showToast(`Absensi petugas tanggal ${dateStr} berhasil disimpan!`);
+        showToast(`Absensi petugas inti tanggal ${dateStr} berhasil disimpan!`);
         tempSignatures = {};
         loadPetugasAttendanceForm();
         renderPetugasSalaryReport();
     } else {
-        showToast("Gagal menyimpan absensi petugas.", "error");
+        showToast("Gagal menyimpan absensi petugas inti.", "error");
     }
 };
 
@@ -2953,7 +2953,7 @@ window.renderPetugasSalaryReport = function() {
     }
 
     if (report.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-secondary);">Belum ada data absensi petugas kopsis.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-secondary);">Belum ada data absensi petugas inti.</td></tr>';
         return;
     }
 
