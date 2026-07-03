@@ -20,7 +20,7 @@ const DEFAULT_DATA = {
         phone: "(0283) 351234",
         logo: "school_logo.png",
         developerName: "Yanuar Evanto",
-        developerBio: "Pengembang sistem KOPSISTA (KOPERASI SISWA THHK) & Absensi Siswa.",
+        developerBio: "Pengembang sistem KOPSISTA (KOPERASI SISWA THHK) & Absensi Anggota Kopsis.",
         developerContact: "0812-3456-7890",
         developerSocial: "@yanuar_evanto"
     },
@@ -320,15 +320,15 @@ class KoperasiDB {
 
         if (!data.settings.developerName) {
             data.settings.developerName = "Yanuar Evanto";
-            data.settings.developerBio = "Pengembang sistem KOPSISTA (KOPERASI SISWA THHK) & Absensi Siswa.";
+            data.settings.developerBio = "Pengembang sistem KOPSISTA (KOPERASI SISWA THHK) & Absensi Anggota Kopsis.";
             data.settings.developerContact = "0812-3456-7890";
             data.settings.developerSocial = "@yanuar_evanto";
             changed = true;
         }
 
-        if (data.settings.coopName === "Koperasi THHK" || !data.settings.coopName) {
+        if (data.settings.coopName === "Koperasi THHK" || !data.settings.coopName || data.settings.developerBio.includes("Absensi Siswa")) {
             data.settings.coopName = "KOPSISTA (KOPERASI SISWA THHK)";
-            data.settings.developerBio = "Pengembang sistem KOPSISTA (KOPERASI SISWA THHK) & Absensi Siswa.";
+            data.settings.developerBio = "Pengembang sistem KOPSISTA (KOPERASI SISWA THHK) & Absensi Anggota Kopsis.";
             changed = true;
         }
 
