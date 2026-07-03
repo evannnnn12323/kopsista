@@ -964,6 +964,7 @@ function renderProductsTab() {
             <td>${p.category}</td>
             <td>Rp ${p.costPrice.toLocaleString('id-ID')}</td>
             <td>Rp ${p.price.toLocaleString('id-ID')}</td>
+            <td style="font-weight:600; color:var(--success-dark);">Rp ${(p.price - p.costPrice).toLocaleString('id-ID')}</td>
             <td>
                 <div style="display:flex; align-items:center; gap:0.5rem;">
                     <span class="badge ${p.stock <= 5 ? 'absent' : 'active'}" style="font-weight:700;">${p.stock}</span>
@@ -981,15 +982,15 @@ function renderProductsTab() {
 
 window.openAddProductModal = function() {
     const modal = document.getElementById('modal-product');
-    document.getElementById('modal-product-title').textContent = "Tambah Barang Koperasi";
+    document.getElementById('modal-product-title').textContent = "Tambah Barang Baru";
     document.getElementById('product-form-mode').value = "add";
-    document.getElementById('prod-id').disabled = false;
-
     document.getElementById('prod-id').value = '';
+    document.getElementById('prod-id').disabled = false;
     document.getElementById('prod-name').value = '';
     document.getElementById('prod-category').value = 'Alat Tulis';
     document.getElementById('prod-cost').value = '';
     document.getElementById('prod-price').value = '';
+    document.getElementById('prod-profit').value = '';
     document.getElementById('prod-stock').value = '';
     document.getElementById('prod-img-b64').value = '';
 
@@ -1009,6 +1010,7 @@ window.openEditProductModal = function(id) {
     document.getElementById('prod-category').value = prod.category;
     document.getElementById('prod-cost').value = prod.costPrice;
     document.getElementById('prod-price').value = prod.price;
+    document.getElementById('prod-profit').value = prod.price - prod.costPrice;
     document.getElementById('prod-stock').value = prod.stock;
     document.getElementById('prod-img-b64').value = prod.image || '';
 
@@ -1368,7 +1370,7 @@ function showInvoiceModal(tx) {
             <span>Rp ${tx.totalAmount.toLocaleString('id-ID')}</span>
         </div>
         <div style="text-align:center; margin-top:1.5rem; font-size:0.75rem; color:var(--gray-500);">
-            Terima kasih telah berbelanja di Koperasi Sekolah!
+            Terima kasih telah berbelanja di KOPSISTA!
         </div>
     `;
 
@@ -1870,6 +1872,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    init2WayProfitBindings();
+
     // Default to Login view
     navigateTo('login');
 });
@@ -1941,6 +1945,7 @@ function renderConsignmentList() {
                 <td>${c.category}</td>
                 <td>Rp ${c.sellingPrice.toLocaleString('id-ID')}</td>
                 <td>Rp ${c.costPrice.toLocaleString('id-ID')}</td>
+                <td style="font-weight:600; color:var(--success-dark);">Rp ${(c.sellingPrice - c.costPrice).toLocaleString('id-ID')}</td>
                 <td>${c.consignedQty} unit</td>
                 <td style="color:var(--success); font-weight:700;">${c.soldQty} unit</td>
                 <td style="font-weight:700;">${remaining} unit</td>
@@ -2080,6 +2085,7 @@ window.openAddConsignmentModal = function() {
     document.getElementById('cons-prod-name').value = '';
     document.getElementById('cons-cost-price').value = '';
     document.getElementById('cons-selling-price').value = '';
+    document.getElementById('cons-profit').value = '';
     document.getElementById('cons-qty').value = '';
     
     // Format current date-time for datetime-local input
@@ -2244,6 +2250,7 @@ window.openApproveRequestModal = function(id, name, cost) {
     const costNum = parseInt(cost);
     const suggestedSelling = Math.ceil((costNum * 1.25) / 500) * 500;
     document.getElementById('approve-selling-price').value = suggestedSelling;
+    document.getElementById('approve-profit-price').value = suggestedSelling - costNum;
     
     modal.classList.add('active');
 };
@@ -3423,6 +3430,77 @@ window.renderPetugasConsignment = function() {
         }
     }
 };
+
+function init2WayProfitBindings() {
+    // 1. Product Modal Binding
+    const prodCostInput = document.getElementById('prod-cost');
+    const prodPriceInput = document.getElementById('prod-price');
+    const prodProfitInput = document.getElementById('prod-profit');
+
+    const updateProdProfit = () => {
+        const cost = parseFloat(prodCostInput.value) || 0;
+        const price = parseFloat(prodPriceInput.value) || 0;
+        prodProfitInput.value = price - cost;
+    };
+
+    const updateProdCost = () => {
+        const price = parseFloat(prodPriceInput.value) || 0;
+        const profit = parseFloat(prodProfitInput.value) || 0;
+        prodCostInput.value = price - profit;
+    };
+
+    if (prodCostInput && prodPriceInput && prodProfitInput) {
+        prodCostInput.addEventListener('input', updateProdProfit);
+        prodPriceInput.addEventListener('input', updateProdProfit);
+        prodProfitInput.addEventListener('input', updateProdCost);
+    }
+
+    // 2. Consignment Modal Binding
+    const consCostInput = document.getElementById('cons-cost-price');
+    const consPriceInput = document.getElementById('cons-selling-price');
+    const consProfitInput = document.getElementById('cons-profit');
+
+    const updateConsProfit = () => {
+        const cost = parseFloat(consCostInput.value) || 0;
+        const price = parseFloat(consPriceInput.value) || 0;
+        consProfitInput.value = price - cost;
+    };
+
+    const updateConsCost = () => {
+        const price = parseFloat(consPriceInput.value) || 0;
+        const profit = parseFloat(consProfitInput.value) || 0;
+        consCostInput.value = price - profit;
+    };
+
+    if (consCostInput && consPriceInput && consProfitInput) {
+        consCostInput.addEventListener('input', updateConsProfit);
+        consPriceInput.addEventListener('input', updateConsProfit);
+        consProfitInput.addEventListener('input', updateConsCost);
+    }
+
+    // 3. Admin Approve Consignment Modal Binding
+    const approvePriceInput = document.getElementById('approve-selling-price');
+    const approveProfitInput = document.getElementById('approve-profit-price');
+
+    const updateApproveProfit = () => {
+        const rawCostStr = document.getElementById('approve-req-cost').value || '0';
+        const cost = parseFloat(rawCostStr.replace(/[^0-9]/g, '')) || 0;
+        const price = parseFloat(approvePriceInput.value) || 0;
+        approveProfitInput.value = price - cost;
+    };
+
+    const updateApprovePrice = () => {
+        const rawCostStr = document.getElementById('approve-req-cost').value || '0';
+        const cost = parseFloat(rawCostStr.replace(/[^0-9]/g, '')) || 0;
+        const profit = parseFloat(approveProfitInput.value) || 0;
+        approvePriceInput.value = cost + profit;
+    };
+
+    if (approvePriceInput && approveProfitInput) {
+        approvePriceInput.addEventListener('input', updateApproveProfit);
+        approveProfitInput.addEventListener('input', updateApprovePrice);
+    }
+}
 
 
 

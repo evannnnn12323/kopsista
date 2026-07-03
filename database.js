@@ -15,12 +15,12 @@ function hashPassword(password) {
 const DEFAULT_DATA = {
     settings: {
         schoolName: "T.H.H.K Tegal",
-        coopName: "Koperasi THHK",
+        coopName: "KOPSISTA (KOPERASI SISWA THHK)",
         address: "Jl. Pendidikan No. 12, Tegal",
         phone: "(0283) 351234",
         logo: "school_logo.png",
         developerName: "Yanuar Evanto",
-        developerBio: "Pengembang sistem Koperasi THHK & Absensi Siswa.",
+        developerBio: "Pengembang sistem KOPSISTA (KOPERASI SISWA THHK) & Absensi Siswa.",
         developerContact: "0812-3456-7890",
         developerSocial: "@yanuar_evanto"
     },
@@ -320,9 +320,15 @@ class KoperasiDB {
 
         if (!data.settings.developerName) {
             data.settings.developerName = "Yanuar Evanto";
-            data.settings.developerBio = "Pengembang sistem Koperasi THHK & Absensi Siswa.";
+            data.settings.developerBio = "Pengembang sistem KOPSISTA (KOPERASI SISWA THHK) & Absensi Siswa.";
             data.settings.developerContact = "0812-3456-7890";
             data.settings.developerSocial = "@yanuar_evanto";
+            changed = true;
+        }
+
+        if (data.settings.coopName === "Koperasi THHK" || !data.settings.coopName) {
+            data.settings.coopName = "KOPSISTA (KOPERASI SISWA THHK)";
+            data.settings.developerBio = "Pengembang sistem KOPSISTA (KOPERASI SISWA THHK) & Absensi Siswa.";
             changed = true;
         }
 
