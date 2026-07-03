@@ -1,0 +1,1944 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Koperasi & Absensi Sekolah</title>
+    
+    <!-- PWA Manifest & Theme -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#6366f1">
+    
+    <!-- Premium Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Lucide Icons (Modern Icon Library) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Chart.js (Charts Library) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- Toast Notifications Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- ================= 1. VIEW: LOGIN ================= -->
+    <div id="view-login" class="app-view">
+        <div class="login-container">
+            <!-- Left Side: Illustration & Branding -->
+            <div class="login-illustration-side">
+                <div class="login-logo-container">
+                    <img src="school_logo.png" alt="Logo Koperasi" class="login-logo" onerror="this.src='https://images.unsplash.com/photo-1546410531-bb4caa6b424d?auto=format&fit=crop&q=80&w=80'">
+                    <div class="login-logo-title">KOPSISTA</div>
+                </div>
+                <div class="login-illustration-container">
+                    <img src="login_illustration.png" alt="School Shop Illustration" class="login-img" onerror="this.src='https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&q=80&w=400'">
+                    <div class="login-school-info">
+                        <h2>KOPSISTA</h2>
+                        <p>Platform digitalisasi koperasi siswa (KOPSISTA), manajemen inventaris, kasir penjualan (POS), dan kehadiran siswa secara terintegrasi.</p>
+                    </div>
+                </div>
+                <div id="login-realtime-clock" class="login-time-badge">Loading...</div>
+            </div>
+            
+            <!-- Right Side: Form -->
+            <div class="login-form-side">
+                <div class="login-header-text">
+                    <h1>Selamat Datang</h1>
+                    <p>Silakan masuk dengan akun Anda untuk melanjutkan.</p>
+                </div>
+                
+                <form id="login-form">
+                    <div class="form-group">
+                        <label class="form-label" for="login-username">Username</label>
+                        <div class="input-icon-wrapper">
+                            <i data-lucide="user"></i>
+                            <input type="text" id="login-username" class="form-input" placeholder="Masukkan username" required autocomplete="username">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="login-password">Kata Sandi</label>
+                        <div class="input-icon-wrapper">
+                            <i data-lucide="lock"></i>
+                            <input type="password" id="login-password" class="form-input" placeholder="Masukkan password" required autocomplete="current-password">
+                            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('login-password', this)">
+                                <i data-lucide="eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="login-options">
+                        <label class="remember-me">
+                            <input type="checkbox" id="login-remember"> Ingat Saya
+                        </label>
+                        <span class="forgot-password" onclick="handleForgotPassword()">Lupa Kata Sandi?</span>
+                    </div>
+                    
+                    <button type="submit" class="btn-login">Masuk ke Sistem</button>
+                </form>
+
+                <!-- Info Akun Demo -->
+                <div class="login-demo-info">
+                    <div class="demo-info-header" onclick="toggleDemoInfo()">
+                        <i data-lucide="info"></i>
+                        <span>Daftar Akun Login</span>
+                        <i data-lucide="chevron-down" id="demo-chevron"></i>
+                    </div>
+                    <div class="demo-info-body" id="demo-info-body" style="display:none;">
+                        <div class="demo-section">
+                            <div class="demo-role-badge admin-badge">🔐 Admin</div>
+                            <div class="demo-account-row">
+                                <span class="demo-uname">Yanuar</span>
+                                <span class="demo-pass">12345678</span>
+                                <button class="demo-fill-btn" onclick="fillLogin('Yanuar','12345678')">Isi</button>
+                            </div>
+                        </div>
+                        <div class="demo-section">
+                            <div class="demo-role-badge petugas-badge">🏪 Petugas Kopsis</div>
+                            <div class="demo-account-row">
+                                <span class="demo-uname">jeisen</span>
+                                <span class="demo-pass">738241</span>
+                                <button class="demo-fill-btn" onclick="fillLogin('jeisen','738241')">Isi</button>
+                            </div>
+                            <div class="demo-account-row">
+                                <span class="demo-uname">marquez</span>
+                                <span class="demo-pass">591064</span>
+                                <button class="demo-fill-btn" onclick="fillLogin('marquez','591064')">Isi</button>
+                            </div>
+                            <div class="demo-account-row">
+                                <span class="demo-uname">mikhaela</span>
+                                <span class="demo-pass">326817</span>
+                                <button class="demo-fill-btn" onclick="fillLogin('mikhaela','326817')">Isi</button>
+                            </div>
+                            <div class="demo-account-row">
+                                <span class="demo-uname">agnel</span>
+                                <span class="demo-pass">847392</span>
+                                <button class="demo-fill-btn" onclick="fillLogin('agnel','847392')">Isi</button>
+                            </div>
+                            <div class="demo-account-row">
+                                <span class="demo-uname">calvin</span>
+                                <span class="demo-pass">103956</span>
+                                <button class="demo-fill-btn" onclick="fillLogin('calvin','103956')">Isi</button>
+                            </div>
+                        </div>
+                        <div class="demo-section">
+                            <div class="demo-role-badge siswa-badge">👤 Siswa</div>
+                            <div class="demo-account-row">
+                                <span class="demo-uname">siswa</span>
+                                <span class="demo-pass">siswa123</span>
+                                <button class="demo-fill-btn" onclick="fillLogin('siswa','siswa123')">Isi</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ================= 2. VIEW: ADMIN DASHBOARD ================= -->
+    <div id="view-admin" class="app-view dashboard-wrapper">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="school_logo.png" alt="School Logo" class="sidebar-logo" onerror="this.src='https://images.unsplash.com/photo-1546410531-bb4caa6b424d?auto=format&fit=crop&q=80&w=80'">
+                <div>
+                    <h1 class="sidebar-title">KOPSISTA</h1>
+                    <span class="sidebar-subtitle" id="sidebar-role-label">Panel Admin</span>
+                </div>
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li class="menu-category">Menu Utama</li>
+                <li class="sidebar-item active">
+                    <a class="sidebar-link" data-tab="dashboard">
+                        <i data-lucide="layout-dashboard"></i> Dashboard
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" data-tab="pos">
+                        <i data-lucide="shopping-cart"></i> POS Kasir (Penjualan)
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" data-tab="shift-sales">
+                        <i data-lucide="file-spreadsheet"></i> Input Jualan Shift
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" data-tab="consignment">
+                        <i data-lucide="badge-percent"></i> Barang Siswa
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" data-tab="petugas-consignment">
+                        <i data-lucide="badge-percent"></i> Titipan Saya
+                    </a>
+                </li>
+                
+                <li class="menu-category">Manajemen Data</li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" data-tab="products">
+                        <i data-lucide="package"></i> Katalog & Stok Barang
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" data-tab="attendance">
+                        <i data-lucide="calendar-check"></i> Absensi Anggota Kopsis
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" data-tab="petugas-attendance">
+                        <i data-lucide="clipboard-signature"></i> Absensi Petugas Inti
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" data-tab="students">
+                        <i data-lucide="users"></i> Data Siswa
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" data-tab="users">
+                        <i data-lucide="shield-check"></i> Akun Pengguna
+                    </a>
+                </li>
+                
+                <li class="menu-category">Laporan & Audit</li>
+                <li class="sidebar-item" id="nav-endofday">
+                    <a class="sidebar-link" data-tab="endofday">
+                        <i data-lucide="calculator"></i> Laporan Akhir Hari
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" data-tab="reports">
+                        <i data-lucide="trending-up"></i> Laporan Keuangan
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" data-tab="logs">
+                        <i data-lucide="activity"></i> Audit Log Aktivitas
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" data-tab="about">
+                        <i data-lucide="info"></i> Tentang Aplikasi
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" data-tab="settings">
+                        <i data-lucide="settings"></i> Pengaturan Sistem
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile-summary">
+                    <img src="" alt="Avatar" class="user-avatar-sm header-user-avatar">
+                    <div class="user-info-sm">
+                        <div class="user-name-sm header-user-name">Loading...</div>
+                        <div class="user-role-sm header-user-role">Admin</div>
+                    </div>
+                </div>
+                <button class="btn-logout-sidebar" onclick="logout()" title="Logout">
+                    <i data-lucide="log-out"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="main-header">
+                <div class="header-title-section">
+                    <h2 id="admin-header-title">Panel Dashboard Utama</h2>
+                </div>
+                <div class="header-actions">
+                    <div id="admin-realtime-clock" class="header-clock">Loading...</div>
+                </div>
+            </header>
+
+            <!-- SUB-PAGE: DASHBOARD OVERVIEW -->
+            <div id="admin-page-dashboard" class="dashboard-page active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h4>Penjualan Hari Ini</h4>
+                            <p id="stat-sales-today">Rp 0</p>
+                        </div>
+                        <div class="stat-icon-box green">
+                            <i data-lucide="banknote"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h4>Jumlah Siswa</h4>
+                            <p id="stat-total-students">0</p>
+                        </div>
+                        <div class="stat-icon-box blue">
+                            <i data-lucide="users-2"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h4>Katalog Barang</h4>
+                            <p id="stat-total-products">0</p>
+                        </div>
+                        <div class="stat-icon-box purple">
+                            <i data-lucide="package-search"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h4>Barang Low Stok</h4>
+                            <p id="stat-low-stock">0</p>
+                        </div>
+                        <div id="stat-low-stock-box" class="stat-icon-box">
+                            <i data-lucide="alert-circle"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Persetujuan Kehadiran Petugas -->
+                <div class="dashboard-column-card" id="dashboard-attendance-approvals-card" style="margin-bottom: 1.5rem; display: none;">
+                    <div class="card-header-flex" style="margin-bottom: 1rem;">
+                        <h3 style="margin:0; display:flex; align-items:center; gap:0.5rem;">
+                            <i data-lucide="bell" style="color:var(--danger);"></i> Persetujuan Kehadiran Petugas <span class="badge" id="pa-approval-badge" style="background:var(--danger); color:#fff; border-radius:12px; padding:0.15rem 0.5rem; font-size:0.75rem; font-weight:bold;">0</span>
+                        </h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="custom-table">
+                            <thead>
+                                <tr>
+                                    <th>Tanggal</th>
+                                    <th>Nama Petugas</th>
+                                    <th>Username</th>
+                                    <th>Status Kehadiran</th>
+                                    <th>Alasan</th>
+                                    <th>Tanda Tangan</th>
+                                    <th style="width: 150px;">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashboard-attendance-approvals-body">
+                                <!-- Dynamic pending rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="dashboard-columns">
+                    <div class="dashboard-column-card">
+                        <div class="card-header-flex">
+                            <h3>Aktivitas Audit Log Terbaru</h3>
+                            <a class="btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.8rem;" onclick="switchAdminTab('logs')">Lihat Semua</a>
+                        </div>
+                        <div id="dashboard-recent-logs" style="max-height: 320px; overflow-y: auto;">
+                            <!-- Dynamic logs -->
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-column-card">
+                        <div class="card-header-flex">
+                            <h3>Peringatan Stok Tipis (≤ 8)</h3>
+                            <a class="btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.8rem;" onclick="switchAdminTab('products')">Kelola Stok</a>
+                        </div>
+                        <div id="dashboard-low-stock-list" style="max-height: 320px; overflow-y: auto;">
+                            <!-- Dynamic low stock -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB-PAGE: POS KASIR -->
+            <div id="admin-page-pos" class="dashboard-page">
+                <div id="pos-shift-alert" style="display:none; background:var(--primary-color); color:white; padding:10px 15px; border-radius:8px; margin-bottom:15px; font-weight:500; font-size:0.9rem; align-items:center; gap:8px;">
+                    <i data-lucide="clock" style="width:18px;height:18px;"></i>
+                    <span id="pos-shift-text">Informasi Shift</span>
+                </div>
+                <div class="pos-container">
+                    <!-- Left: Catalog and Product Selection -->
+                    <div class="pos-catalog-panel">
+                        <div class="pos-search-bar">
+                            <input type="text" id="pos-search-input" class="pos-search-input" placeholder="Cari barang berdasarkan nama atau kode..." oninput="searchPOSProducts()">
+                            <button class="btn-primary" onclick="searchPOSProducts()"><i data-lucide="search"></i> Cari</button>
+                        </div>
+                        
+                        <div id="pos-categories-wrapper" class="pos-category-tabs">
+                            <!-- Categories generated dynamically -->
+                        </div>
+                        
+                        <div id="pos-products-grid" class="pos-products-scroll">
+                            <!-- Products generated dynamically -->
+                        </div>
+                    </div>
+                    
+                    <!-- Right: Cart & Checkout Billing -->
+                    <div class="pos-cart-panel">
+                        <div class="pos-cart-header">
+                            <h3><span>Keranjang POS</span> <i data-lucide="shopping-bag" style="color:var(--primary-dark)"></i></h3>
+                        </div>
+                        
+                        <div id="pos-cart-items" class="pos-cart-items-scroll">
+                            <!-- Items generated dynamically -->
+                        </div>
+                        
+                        <div class="pos-checkout-section">
+                            <div class="customer-select-wrapper">
+                                <label class="form-label" for="pos-customer-select">Identitas Pembeli (Siswa)</label>
+                                <select id="pos-customer-select" class="customer-select">
+                                    <!-- Students options -->
+                                </select>
+                            </div>
+                            
+                            <div class="checkout-row">
+                                <span>Subtotal</span>
+                                <span id="pos-cart-subtotal">Rp 0</span>
+                            </div>
+                            <div class="checkout-row total">
+                                <span>TOTAL AKHIR</span>
+                                <span id="pos-cart-total">Rp 0</span>
+                            </div>
+                            
+                            <button class="btn-checkout" onclick="processPOSCheckout()">Bayar & Simpan Transaksi</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB-PAGE: SHIFT SALES MANUAL INPUT -->
+            <div id="admin-page-shift-sales" class="dashboard-page">
+                <div class="card" style="max-width: 900px; margin: 0 auto;">
+                    <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+                        <h3>Input Jualan per Shift</h3>
+                        <div style="font-size:0.85rem; color:var(--text-secondary);">Masukkan total produk yang terjual pada shift istirahat</div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Top Controls: Date and Shift selection -->
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:2rem; background:var(--gray-50); padding:1.25rem; border-radius:8px; border:1px solid var(--gray-200);">
+                            <div class="form-group" style="margin:0;">
+                                <label class="form-label" for="shift-sales-date">Tanggal Penjualan</label>
+                                <input type="date" id="shift-sales-date" class="form-input" style="padding-left:1rem;">
+                                <small id="shift-sales-date-lock-msg" style="display:none; color:var(--warning-dark); font-size:0.75rem; margin-top:4px;">* Tanggal dikunci oleh sistem</small>
+                            </div>
+                            <div class="form-group" style="margin:0;">
+                                <label class="form-label" for="shift-sales-select">Shift Istirahat</label>
+                                <select id="shift-sales-select" class="form-input" style="padding-left:1rem;">
+                                    <option value="Shift 1">Shift 1 (Istirahat Pertama)</option>
+                                    <option value="Shift 2">Shift 2 (Istirahat Kedua)</option>
+                                    <option value="Shift 3">Shift 3 (Istirahat Ketiga)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Product sales list table -->
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Kode</th>
+                                        <th>Nama Barang</th>
+                                        <th>Kategori</th>
+                                        <th>Stok Tersedia</th>
+                                        <th>Harga Satuan</th>
+                                        <th style="width: 150px; text-align: center;">Jumlah Terjual</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="shift-sales-product-body">
+                                    <!-- Dynamic rows from app.js -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div style="margin-top: 2rem; display: flex; justify-content: flex-end; gap: 1rem; border-top: 1px solid var(--gray-100); padding-top: 1.5rem;">
+                            <button class="btn-secondary" onclick="resetShiftSalesForm()"><i data-lucide="rotate-ccw"></i> Reset</button>
+                            <button class="btn-primary" onclick="submitShiftSalesForm()"><i data-lucide="save"></i> Simpan Penjualan Shift</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB-PAGE: PERSONAL CONSIGNMENT (PETUGAS / STAFF) -->
+            <div id="admin-page-petugas-consignment" class="dashboard-page">
+                <div style="border-bottom:1.5px solid var(--gray-100); padding-bottom: 0.75rem; margin-bottom:1.5rem; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <h2 style="font-weight:700; margin:0;">Titipan Saya</h2>
+                        <p style="color:var(--gray-500); font-size:0.9rem; margin: 4px 0 0 0;">Kelola barang titipan jualan milik Anda sendiri di Koperasi.</p>
+                    </div>
+                    <button class="btn-primary" onclick="openAddSiswaConsignmentModal()"><i data-lucide="plus"></i> Ajukan Titip Barang Jualan</button>
+                </div>
+                
+                <!-- SUMMARY WIDGETS -->
+                <div class="stats-grid" style="margin-bottom: 2rem;">
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h4>Total Barang Dititipkan</h4>
+                            <p id="petugas-cons-total-qty">0 unit</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h4>Total Unit Terjual</h4>
+                            <p id="petugas-cons-sold-qty" style="color:var(--success-dark);">0 unit</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h4>Total Pendapatan Kotor</h4>
+                            <p id="petugas-cons-total-earnings">Rp 0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h4>Bagi Hasil Belum Diambil</h4>
+                            <p id="petugas-cons-unpaid" style="color:var(--primary-dark);">Rp 0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-columns" style="gap:1.5rem;">
+                    <!-- Left: active consignments list -->
+                    <div class="dashboard-column-card" style="flex:2;">
+                        <h3>Daftar Barang Titipan Aktif Anda</h3>
+                        <div class="table-responsive" style="margin-top:1rem;">
+                            <table class="custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nama Barang</th>
+                                        <th>Kategori</th>
+                                        <th>Bagian Siswa</th>
+                                        <th>Harga Jual</th>
+                                        <th>Total Titip</th>
+                                        <th>Terjual</th>
+                                        <th>Sisa Stok</th>
+                                        <th>Tanggal Masuk</th>
+                                        <th>Status Bayar</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="petugas-cons-list-body">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Right: sales log -->
+                    <div class="dashboard-column-card" style="flex:1;">
+                        <h3>Log Penjualan Terakhir</h3>
+                        <div class="table-responsive" style="margin-top:1rem;">
+                            <table class="custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Waktu</th>
+                                        <th>Nama Barang</th>
+                                        <th>Jumlah</th>
+                                        <th>Pendapatan</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="petugas-cons-sales-body">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personal requests queue -->
+                <div class="dashboard-column-card" style="margin-top:2rem;">
+                    <h3>Riwayat Pengajuan Titipan Baru</h3>
+                    <div class="table-responsive" style="margin-top:1rem;">
+                        <table class="custom-table">
+                            <thead>
+                                <tr>
+                                    <th>Tanggal Pengajuan</th>
+                                    <th>Nama Barang</th>
+                                    <th>Kategori</th>
+                                    <th>Harga Diajukan (Bagian Siswa)</th>
+                                    <th>Jumlah Unit</th>
+                                    <th>Status</th>
+                                    <th>Keterangan / Catatan</th>
+                                </tr>
+                            </thead>
+                            <tbody id="petugas-cons-requests-body">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB-PAGE: CONSIGNMENT (BARANG SISWA) -->
+            <div id="admin-page-consignment" class="dashboard-page">
+                <div class="card-header-flex">
+                    <h3>Sistem Barang Titipan Siswa (Konsinyasi)</h3>
+                    <button class="btn-primary" onclick="openAddConsignmentModal()"><i data-lucide="plus"></i> Daftarkan Titipan Baru</button>
+                </div>
+                
+                <div class="secondary-tabs">
+                    <button class="sec-tab-btn active" onclick="switchConsignmentSubTab('list')">Daftar Titipan</button>
+                    <button class="sec-tab-btn" onclick="switchConsignmentSubTab('sales')">Riwayat Penjualan</button>
+                    <button class="sec-tab-btn" onclick="switchConsignmentSubTab('payouts')">Bagi Hasil & Payout</button>
+                    <button class="sec-tab-btn" id="btn-tab-cons-requests" onclick="switchConsignmentSubTab('requests')">Pengajuan Siswa <span id="cons-requests-badge" class="badge absent" style="display:none; padding:0.1rem 0.4rem; border-radius:50%; font-size:0.7rem; margin-left:0.25rem;">0</span></button>
+                </div>
+
+                <!-- Sub-tab 1: Daftar Barang Titipan -->
+                <div id="cons-subtab-list" class="cons-subtab-content active">
+                    <div class="table-responsive">
+                        <table class="custom-table">
+                            <thead>
+                                <tr>
+                                    <th>ID Titipan</th>
+                                    <th>Siswa Penitip</th>
+                                    <th>Nama Barang</th>
+                                    <th>Kategori</th>
+                                    <th>Harga Jual</th>
+                                    <th>Bagian Siswa</th>
+                                    <th>Keuntungan Kop</th>
+                                    <th>Dititipkan</th>
+                                    <th>Terjual</th>
+                                    <th>Sisa Stok</th>
+                                    <th>Tanggal Titip</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cons-list-table-body">
+                                <!-- Consignment Rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Sub-tab 2: Riwayat Penjualan -->
+                <div id="cons-subtab-sales" class="cons-subtab-content">
+                    <div class="table-responsive">
+                        <table class="custom-table">
+                            <thead>
+                                <tr>
+                                    <th>ID Jual</th>
+                                    <th>Nama Barang</th>
+                                    <th>Siswa Penitip</th>
+                                    <th>Jumlah Terjual</th>
+                                    <th>Harga Jual</th>
+                                    <th>Bagian Siswa</th>
+                                    <th>Keuntungan Kop</th>
+                                    <th>Tanggal & Waktu Penjualan</th>
+                                    <th>ID Transaksi</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cons-sales-table-body">
+                                <!-- Consignment Sales Rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Sub-tab 3: Pembayaran Bagi Hasil & Payout -->
+                <div id="cons-subtab-payouts" class="cons-subtab-content">
+                    <div class="dashboard-columns" style="gap: 1.5rem; margin-bottom: 2rem;">
+                        <div class="dashboard-column-card" style="flex: 2;">
+                            <h3>Total Belum Dibayarkan per Siswa</h3>
+                            <div class="table-responsive" style="margin-top: 1rem;">
+                                <table class="custom-table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID Siswa</th>
+                                            <th>Nama Siswa</th>
+                                            <th>Total Terjual</th>
+                                            <th>Total Hasil Kotor</th>
+                                            <th>Sudah Dibayarkan</th>
+                                            <th>Belum Dibayarkan</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="cons-payouts-summary-body">
+                                        <!-- Payout summaries -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="dashboard-column-card" style="flex: 1.2;">
+                            <h3>Riwayat Serah Terima Uang (Payouts)</h3>
+                            <div class="table-responsive" style="margin-top: 1rem; max-height: 300px; overflow-y: auto;">
+                                <table class="custom-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Tanggal & Waktu</th>
+                                            <th>Siswa</th>
+                                            <th>Jumlah Uang</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="cons-payouts-history-body">
+                                        <!-- Payout history -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sub-tab 4: Pengajuan Siswa -->
+                <div id="cons-subtab-requests" class="cons-subtab-content">
+                    <div class="table-responsive">
+                        <table class="custom-table">
+                            <thead>
+                                <tr>
+                                    <th>Tanggal Pengajuan</th>
+                                    <th>Siswa Penitip</th>
+                                    <th>Nama Barang</th>
+                                    <th>Kategori</th>
+                                    <th>Jumlah Unit</th>
+                                    <th>Bagian Siswa</th>
+                                    <th>Catatan Siswa</th>
+                                    <th>Status</th>
+                                    <th>Aksi Persetujuan</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cons-requests-table-body">
+                                <!-- Consignment Requests Rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB-PAGE: GOODS MANAGEMENT -->
+            <div id="admin-page-products" class="dashboard-page">
+                <div class="card-header-flex">
+                    <h3>Katalog Barang Koperasi</h3>
+                    <button class="btn-primary" onclick="openAddProductModal()"><i data-lucide="plus"></i> Tambah Barang Baru</button>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>ID Barang</th>
+                                <th>Nama Barang</th>
+                                <th>Kategori</th>
+                                <th>Harga Modal</th>
+                                <th>Harga Jual</th>
+                                <th>Pendapatan Bersih</th>
+                                <th>Stok Tersedia</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="products-table-body">
+                            <!-- Products Table rows dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SUB-PAGE: ATTENDANCE MANAGEMENT -->
+            <div id="admin-page-attendance" class="dashboard-page">
+                <div class="card-header-flex" style="margin-bottom: 0.75rem;">
+                    <h3>Input Absensi Harian Anggota Kopsis</h3>
+                    <div class="card-header-actions" style="align-items:center; flex-wrap:wrap;">
+                        <!-- Admin: date picker editable untuk lihat histori -->
+                        <div id="attendance-date-admin" style="display:none; align-items:center; gap:0.5rem;">
+                            <label style="font-size:0.85rem; color:var(--gray-500); font-weight:600;">Tanggal:</label>
+                            <input type="date" id="attendance-date-picker" class="customer-select" style="width: 180px;" onchange="changeAttendanceDate()">
+                        </div>
+                        <!-- Petugas: tanggal dikunci ke hari ini, tidak bisa diubah -->
+                        <div id="attendance-date-locked" style="display:none; align-items:center; gap:0.5rem;">
+                            <i data-lucide="lock" style="width:16px;height:16px;color:var(--warning);"></i>
+                            <span id="attendance-date-display" style="font-weight:700; font-size:0.95rem; background:var(--gray-100); padding:0.4rem 0.85rem; border-radius:8px; border:2px solid var(--warning); color:var(--dark);"></span>
+                            <span style="font-size:0.78rem; color:var(--warning); font-weight:600;">Tanggal dikunci oleh sistem</span>
+                        </div>
+                        <button class="btn-primary" onclick="saveAttendanceData()"><i data-lucide="save"></i> Simpan Absensi</button>
+                        <button id="btn-clear-attendance" class="btn-danger" style="display:none;" onclick="clearAttendanceForDateUI()"><i data-lucide="trash-2"></i> Hapus Semua Absensi</button>
+                    </div>
+                </div>
+
+                <!-- Admin: Status Hari (Masuk / Libur) -->
+                <div id="school-day-status-bar" style="display:none; margin-bottom:1.5rem; padding:0.75rem 1rem; border-radius:8px; background:var(--gray-50); border:1px solid var(--gray-200); align-items:center; flex-wrap:wrap; gap:0.75rem;">
+                    <span style="font-size:0.85rem; font-weight:700; color:var(--gray-600);">Status Hari:</span>
+                    <span id="school-day-badge" style="padding:0.3rem 0.9rem; border-radius:20px; font-size:0.82rem; font-weight:700;"></span>
+                    <span id="school-day-reason" style="font-size:0.82rem; color:var(--gray-500); font-style:italic;"></span>
+                    <div style="margin-left:auto; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+                        <input type="text" id="school-day-reason-input" class="form-input" placeholder="Alasan libur (opsional)..." style="width:220px; padding:0.35rem 0.75rem; font-size:0.85rem;">
+                        <button class="btn-success" onclick="setSchoolDayStatus('Masuk')" style="padding:0.35rem 0.85rem; font-size:0.85rem;"><i data-lucide="check-circle"></i> Tandai Masuk</button>
+                        <button class="btn-danger" onclick="setSchoolDayStatus('Libur')" style="padding:0.35rem 0.85rem; font-size:0.85rem;"><i data-lucide="x-circle"></i> Tandai Libur</button>
+                    </div>
+                </div>
+
+                
+                <div class="table-responsive">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>ID Siswa</th>
+                                <th>Nama Lengkap</th>
+                                <th>Kelas</th>
+                                <th>Status Kehadiran</th>
+                                <th>Alasan</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendance-table-body">
+                            <!-- Attendance Rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SUB-PAGE: STUDENT MANAGEMENT -->
+            <div id="admin-page-students" class="dashboard-page">
+                <div class="card-header-flex">
+                    <h3>Database Biodata Siswa</h3>
+                    <button class="btn-primary" onclick="openAddStudentModal()"><i data-lucide="plus"></i> Tambah Siswa Baru</button>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>ID Siswa</th>
+                                <th>Nama Lengkap</th>
+                                <th>Kelas</th>
+                                <th>Jenis Kelamin</th>
+                                <th>No Telepon</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="students-table-body">
+                            <!-- Students Table rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SUB-PAGE: USER ACCOUNTS -->
+            <div id="admin-page-users" class="dashboard-page">
+                <div class="card-header-flex">
+                    <h3>Daftar Pengguna Sistem</h3>
+                    <button class="btn-primary" onclick="openAddUserModal()"><i data-lucide="user-plus"></i> Buat Akun Baru</button>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>Nama Pengguna</th>
+                                <th>Username</th>
+                                <th>Hak Akses</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body">
+                            <!-- Users Table rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SUB-PAGE: REPORTS -->
+            <div id="admin-page-reports" class="dashboard-page">
+                <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h4>Pendapatan Omset (Total)</h4>
+                            <p id="report-total-revenue" style="color:var(--primary-dark)">Rp 0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h4>Keuntungan Bersih (Total)</h4>
+                            <p id="report-total-profit" style="color:var(--secondary-dark)">Rp 0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h4>Jumlah Transaksi Sukses</h4>
+                            <p id="report-total-transactions">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-columns">
+                    <div class="dashboard-column-card">
+                        <div class="card-header-flex">
+                            <h3>Grafik Tren Penjualan Harian</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="salesTrendChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="dashboard-column-card">
+                        <div class="card-header-flex">
+                            <h3>Produk Paling Terjual (Kuantitas)</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="popularProductsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-columns" style="margin-top: 2rem;">
+                    <!-- Left: Manual Adjustments -->
+                    <div class="dashboard-column-card" style="flex: 1.5;">
+                        <div class="card-header-flex" style="margin-bottom: 1rem;">
+                            <h3>Buku Jurnal Untung / Rugi Manual</h3>
+                            <button class="btn-primary" onclick="openAddAdjustmentModal()" style="font-size: 0.8rem; padding: 0.4rem 0.8rem;"><i data-lucide="plus"></i> Catat Untung/Rugi</button>
+                        </div>
+                        <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
+                            <table class="custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Hari / Tanggal / Waktu</th>
+                                        <th>Jenis</th>
+                                        <th>Kategori</th>
+                                        <th>Nominal</th>
+                                        <th>Keterangan</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adjustments-table-body">
+                                    <!-- Manual adjustments -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-header-flex" style="margin-top:2rem;">
+                    <h3>Riwayat Transaksi Penjualan</h3>
+                </div>
+                <div class="table-responsive">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>ID Transaksi</th>
+                                <th>Tanggal</th>
+                                <th>Nama Siswa</th>
+                                <th>Total Belanja</th>
+                                <th>Laba Bersih</th>
+                                <th>Operator Kasir</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reports-table-body">
+                            <!-- Transactions reports rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SUB-PAGE: END OF DAY REPORT -->
+            <div id="admin-page-endofday" class="dashboard-page">
+                <div class="card" style="max-width:800px; margin:0 auto;">
+                    <div class="card-header">
+                        <h3>Laporan Akhir Hari (Penjualan Kopsis)</h3>
+                    </div>
+                    <div class="card-body">
+                        <p style="color:var(--text-secondary); margin-bottom:1.5rem;">Laporan ini diisi oleh Petugas Kopsis Inti di akhir hari operasional sekolah. Berisi ringkasan penjualan kasir, total pendapatan, dan untung/rugi.</p>
+                        
+                        <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom:2rem;">
+                            <div class="stat-card">
+                                <h4>Total Transaksi</h4>
+                                <p id="eod-total-tx">0</p>
+                            </div>
+                            <div class="stat-card">
+                                <h4>Total Pendapatan</h4>
+                                <p id="eod-total-income">Rp 0</p>
+                            </div>
+                            <div class="stat-card">
+                                <h4>Total Untung Kotor</h4>
+                                <p id="eod-total-profit">Rp 0</p>
+                            </div>
+                        </div>
+
+                        <div style="background:var(--gray-50); padding:1.5rem; border-radius:8px; border:1px solid var(--gray-200);">
+                            <h4 style="margin-bottom:1rem; font-size:1.1rem;">Verifikasi Kas</h4>
+                            <div class="form-group">
+                                <label>Uang Tunai di Laci Kasir (Real Cash)</label>
+                                <input type="number" id="eod-real-cash" class="form-input" placeholder="Masukkan jumlah uang fisik...">
+                            </div>
+                            <div id="eod-discrepancy-box" style="margin-top:1rem; padding:1rem; border-radius:6px; display:none;">
+                                <strong id="eod-discrepancy-title"></strong>
+                                <p id="eod-discrepancy-text" style="margin-top:0.25rem; font-size:0.9rem;"></p>
+                            </div>
+                            
+                            <button class="btn-primary" style="margin-top:1.5rem; width:100%;" onclick="submitEndOfDayReport()">Kunci Laporan Harian & Serahkan ke Admin</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB-PAGE: ABSENSI PETUGAS KOPSIS -->
+            <div id="admin-page-petugas-attendance" class="dashboard-page">
+                <!-- Header + Date Picker -->
+                <div class="card-header-flex" style="margin-bottom:1.25rem;">
+                    <div>
+                        <h3 style="margin:0;">Absensi &amp; Gaji Petugas Inti</h3>
+                        <p style="margin:0.25rem 0 0; font-size:0.82rem; color:var(--text-secondary);">Tandatangani kolom kehadiran · Gaji otomatis Rp 3.000 / pertemuan (Inti Rp 5.000)</p>
+                    </div>
+                    <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
+                        <input type="date" id="pa-date-picker" class="form-input" style="padding:0.5rem 0.75rem; width:auto;">
+                        <button class="btn-primary" onclick="loadPetugasAttendanceForm()">
+                            <i data-lucide="calendar"></i> Muat Tanggal
+                        </button>
+                        <button class="btn-success" onclick="savePetugasAttendanceForm()">
+                            <i data-lucide="save"></i> Simpan Absensi
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tabel Absensi + Tanda Tangan -->
+                <div class="dashboard-column-card" style="margin-bottom:1.5rem; overflow:visible;">
+                    <div class="table-responsive">
+                        <table class="custom-table" id="pa-attendance-table">
+                            <thead>
+                                <tr>
+                                    <th style="width:40px;">No</th>
+                                    <th>Nama Petugas</th>
+                                    <th>Username</th>
+                                    <th style="width:130px;">Status Kehadiran</th>
+                                    <th style="width:150px;">Alasan</th>
+                                    <th>Tanda Tangan</th>
+                                    <th style="width:120px;">Gaji Pertemuan</th>
+                                    <th style="width:80px;">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pa-attendance-body">
+                                <tr><td colspan="8" style="text-align:center; color:var(--text-secondary); padding:2rem;">Pilih tanggal lalu klik "Muat Tanggal"</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Rekap Gaji Keseluruhan -->
+                <div class="dashboard-column-card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                        <h4 style="margin:0;">📊 Rekap Total Gaji Petugas</h4>
+                        <button class="btn-secondary" onclick="renderPetugasSalaryReport()" style="padding:0.4rem 0.85rem; font-size:0.82rem;">
+                            <i data-lucide="refresh-cw"></i> Refresh
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="custom-table">
+                            <thead>
+                                <tr>
+                                    <th>Nama Petugas</th>
+                                    <th>Username</th>
+                                    <th>Total Hadir</th>
+                                    <th>Total Gaji</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pa-salary-report-body">
+                                <tr><td colspan="4" style="text-align:center; color:var(--text-secondary);">Belum ada data</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODAL TANDA TANGAN -->
+            <div id="signature-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center;">
+                <div style="background:var(--bg-card); border-radius:16px; padding:1.5rem; width:420px; max-width:95vw; box-shadow:0 20px 60px rgba(0,0,0,0.4);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                        <h4 style="margin:0;">✍️ Tanda Tangan — <span id="sig-modal-name"></span></h4>
+                        <button onclick="closeSignatureModal()" style="background:none; border:none; cursor:pointer; color:var(--text-secondary); font-size:1.25rem;">✕</button>
+                    </div>
+                    <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:0.75rem;">Tanda tangani di area bawah ini menggunakan mouse atau layar sentuh:</p>
+                    <canvas id="signature-canvas" width="370" height="180"
+                        style="border:2px dashed var(--primary); border-radius:10px; background:#fff; cursor:crosshair; touch-action:none; display:block; margin:0 auto;"></canvas>
+                    <div style="display:flex; gap:0.75rem; margin-top:1rem;">
+                        <button class="btn-secondary" onclick="clearSignature()" style="flex:1;"><i data-lucide="eraser"></i> Hapus</button>
+                        <button class="btn-success" onclick="confirmSignature()" style="flex:2;"><i data-lucide="check"></i> Simpan Tanda Tangan</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB-PAGE: AUDIT LOGS -->
+            <div id="admin-page-logs" class="dashboard-page">
+                <div class="card-header-flex">
+                    <h3>Audit Log Aktivitas Seluruh Pengguna</h3>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>Waktu & Tanggal</th>
+                                <th>Username</th>
+                                <th>Hak Akses</th>
+                                <th>Jenis Aktivitas</th>
+                                <th>Detail Keterangan Aktivitas</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logs-table-body">
+                            <!-- Logs dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SUB-PAGE: ABOUT APP (ADMIN) -->
+            <div id="admin-page-about" class="dashboard-page">
+                <div style="border-bottom:1.5px solid var(--gray-100); padding-bottom: 0.75rem; margin-bottom:1.5rem;">
+                    <p style="color:var(--text-secondary);">Informasi mengenai sistem aplikasi KOPSISTA (KOPERASI SISWA THHK) dan tim pengembang.</p>
+                </div>
+                <div class="dashboard-column-card" style="max-width: 600px; margin: 0 auto; padding: 2rem;">
+                    <div style="text-align:center; margin-bottom: 1.5rem;">
+                        <img src="school_logo.png" alt="Logo Koperasi" style="width:80px; height:80px; border-radius:50%; background:var(--primary-light); padding:4px; margin-bottom:1rem;">
+                        <h2 style="font-weight:700; color:var(--primary-dark); font-size:1.5rem;" id="about-coop-name">KOPSISTA (KOPERASI SISWA THHK)</h2>
+                        <span class="badge present" style="margin-top:0.5rem; display:inline-block;">Versi 3.0 (Aktif)</span>
+                    </div>
+                    <div style="border-top: 1px solid var(--gray-100); padding-top:1.5rem;">
+                        <h4 style="font-weight:700; margin-bottom:0.75rem; color:var(--gray-700);"><i data-lucide="code" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;"></i> Pengembang Aplikasi</h4>
+                        <div style="background:var(--gray-50); border:1px solid var(--gray-200); border-radius:8px; padding:1.25rem; margin-bottom:1.5rem; text-align:left;">
+                            <div style="font-weight:700; font-size:1.05rem; color:var(--dark);" id="about-dev-name">Yanuar Evanto</div>
+                            <div style="font-size:0.85rem; color:var(--gray-600); margin:0.35rem 0 0.75rem 0;" id="about-dev-bio">Pengembang sistem KOPSISTA (KOPERASI SISWA THHK) & Absensi Anggota Kopsis.</div>
+                            <div style="display:flex; flex-wrap:wrap; gap:1rem; font-size:0.82rem; border-top:1px solid var(--gray-200); padding-top:0.75rem;">
+                                <span style="color:var(--gray-500);"><strong style="color:var(--dark);">No. HP/WA:</strong> <span id="about-dev-contact">0812-3456-7890</span></span>
+                                <span style="color:var(--gray-500);"><strong style="color:var(--dark);">Social Media:</strong> <span id="about-dev-social">@yanuar_evanto</span></span>
+                            </div>
+                        </div>
+                        <p style="font-size:0.8rem; color:var(--gray-400); text-align:center; margin-top:2rem;">Hak Cipta &copy; 2026 KOPSISTA Tegal. Dilindungi Undang-Undang.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB-PAGE: SYSTEM SETTINGS -->
+            <div id="admin-page-settings" class="dashboard-page">
+                <div class="settings-layout">
+                    <!-- Left Column: Forms -->
+                    <div style="display:flex; flex-direction:column; gap:2rem;">
+                        <!-- School Coop Profiling -->
+                        <div class="dashboard-column-card">
+                            <h3 style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--gray-100); padding-bottom: 0.5rem;">Identitas Sekolah & Koperasi</h3>
+                            <form id="settings-form" onsubmit="event.preventDefault(); saveSystemSettings();">
+                                <div class="form-group">
+                                    <label class="form-label" for="settings-school">Nama Sekolah</label>
+                                    <input type="text" id="settings-school" class="form-input" style="padding-left:1rem;" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="settings-coop">Nama Koperasi</label>
+                                    <input type="text" id="settings-coop" class="form-input" style="padding-left:1rem;" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="settings-address">Alamat Koperasi</label>
+                                    <input type="text" id="settings-address" class="form-input" style="padding-left:1rem;" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="settings-phone">No. Telepon / Kontak</label>
+                                    <input type="text" id="settings-phone" class="form-input" style="padding-left:1rem;" required>
+                                </div>
+                                <button type="submit" class="btn-primary" style="width:100%; justify-content:center; padding:0.75rem;"><i data-lucide="save"></i> Simpan Identitas</button>
+                            </form>
+                        </div>
+
+                        <!-- Developer Profiling -->
+                        <div class="dashboard-column-card">
+                            <h3 style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--gray-100); padding-bottom: 0.5rem;">Profil Pengembang Aplikasi</h3>
+                            <form id="settings-dev-form" onsubmit="event.preventDefault(); saveDeveloperSettings();">
+                                <div class="form-group">
+                                    <label class="form-label" for="settings-dev-name">Nama Pengembang (Developer)</label>
+                                    <input type="text" id="settings-dev-name" class="form-input" style="padding-left:1rem;" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="settings-dev-bio">Deskripsi / Tentang Pengembang</label>
+                                    <input type="text" id="settings-dev-bio" class="form-input" style="padding-left:1rem;" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="settings-dev-contact">No. HP / Kontak WA</label>
+                                    <input type="text" id="settings-dev-contact" class="form-input" style="padding-left:1rem;" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="settings-dev-social">Media Sosial (misal: Instagram)</label>
+                                    <input type="text" id="settings-dev-social" class="form-input" style="padding-left:1rem;" required>
+                                </div>
+                                <button type="submit" class="btn-primary" style="width:100%; justify-content:center; padding:0.75rem;"><i data-lucide="save"></i> Simpan Profil Pengembang</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Backup and Restore Panel -->
+                    <div class="dashboard-column-card" style="display:flex; flex-direction:column; justify-content:space-between;">
+                        <div>
+                            <h3 style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--gray-100); padding-bottom: 0.5rem;">Backup & Restore Database Lokal</h3>
+                            <p style="font-size:0.85rem; color:var(--gray-500); margin-bottom: 1.5rem;">
+                                Ekspor semua data Koperasi Sekolah (Barang, Siswa, Transaksi, Absensi, Pengaturan, Log) ke dalam file berkas JSON untuk cadangan, atau unggah cadangan tersebut untuk memulihkan keadaan sistem.
+                            </p>
+                        </div>
+                        
+                        <div style="display:flex; flex-direction:column; gap:1rem;">
+                            <button class="btn-primary" onclick="exportDatabase()" style="width:100%; justify-content:center; padding: 0.75rem;"><i data-lucide="download"></i> Ekspor / Backup JSON Database</button>
+                            
+                            <div class="backup-restore-box" onclick="document.getElementById('import-file-selector').click()">
+                                <i data-lucide="upload-cloud" style="width: 40px; height: 40px; color: var(--primary); margin-bottom: 0.5rem;"></i>
+                                <div style="font-weight:700; font-size:0.9rem;">Impor / Restore Database JSON</div>
+                                <span style="font-size:0.75rem; color:var(--gray-500)">Klik untuk memilih file cadangan (.json)</span>
+                                <input type="file" id="import-file-selector" class="file-input-hidden" accept=".json" onchange="importDatabase(event)">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ================= 3. VIEW: SISWA DASHBOARD ================= -->
+    <div id="view-siswa" class="app-view" style="flex-direction: column; width: 100vw; min-height: 100vh;">
+        <!-- Top Navbar -->
+        <nav class="siswa-navbar">
+            <div style="display:flex; align-items:center; gap:0.75rem;">
+                <img src="school_logo.png" alt="Logo Koperasi" style="width:35px; height:35px; border-radius:50%; background:var(--primary-light); padding:2px;">
+                <div>
+                    <h1 style="font-size:1.1rem; font-weight:700;">KOPSISTA</h1>
+                    <div style="font-size:0.75rem; color:var(--gray-500)">Koperasi Siswa THHK</div>
+                </div>
+            </div>
+            
+            <ul class="siswa-nav-links">
+                <li><a class="siswa-nav-link active" data-tab="catalog"><i data-lucide="store"></i> Katalog Barang</a></li>
+                <li><a class="siswa-nav-link" data-tab="history"><i data-lucide="shopping-bag"></i> Riwayat Pembelian</a></li>
+                <li><a class="siswa-nav-link" data-tab="consignment"><i data-lucide="badge-percent"></i> Titipan Saya</a></li>
+                <li><a class="siswa-nav-link" data-tab="attendance"><i data-lucide="calendar-check-2"></i> Kehadiran Saya</a></li>
+                <li><a class="siswa-nav-link" data-tab="profile"><i data-lucide="user-cog"></i> Profil & Akun</a></li>
+                <li><a class="siswa-nav-link" data-tab="about"><i data-lucide="info"></i> Tentang Aplikasi</a></li>
+            </ul>
+
+            <div style="display:flex; align-items:center; gap:1.5rem;">
+                <div id="siswa-realtime-clock" class="header-clock" style="font-size: 0.8rem;">Clock...</div>
+                
+                <div style="display:flex; align-items:center; gap:0.5rem;">
+                    <img src="" alt="Avatar" class="user-avatar-sm header-user-avatar">
+                    <span class="header-user-name" style="font-weight:700; font-size:0.85rem;">Siswa</span>
+                    <button class="btn-logout-sidebar" onclick="logout()" style="padding:0.25rem;"><i data-lucide="log-out"></i></button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Body Content -->
+        <main style="padding: 2.5rem 3rem; flex-grow: 1; overflow-y: auto;">
+            <!-- SUB-PAGE: SISWA CATALOG -->
+            <div id="siswa-page-catalog" class="dashboard-page active">
+                <div style="border-bottom:1.5px solid var(--gray-100); padding-bottom: 0.75rem;">
+                    <h2 style="font-weight:700;">Katalog Barang Koperasi</h2>
+                    <p style="color:var(--gray-500); font-size:0.9rem;">Temukan barang, aksesoris, makanan, minuman, dan alat tulis sekolah yang tersedia di Koperasi Siswa.</p>
+                </div>
+                <div id="siswa-catalog-grid" class="catalog-grid">
+                    <!-- Product catalog cards -->
+                </div>
+            </div>
+
+            <!-- SUB-PAGE: PURCHASE HISTORY -->
+            <div id="siswa-page-history" class="dashboard-page">
+                <div style="border-bottom:1.5px solid var(--gray-100); padding-bottom: 0.75rem; margin-bottom:1.5rem;">
+                    <h2 style="font-weight:700;">Riwayat Belanja Anda</h2>
+                    <p style="color:var(--gray-500); font-size:0.9rem;">Daftar transaksi pembelian barang koperasi sekolah yang tercatat atas nama Anda.</p>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>ID Transaksi</th>
+                                <th>Tanggal Transaksi</th>
+                                <th>Total Belanja</th>
+                                <th>Petugas Kasir</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="siswa-history-table-body">
+                            <!-- Siswa personal transactions -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SUB-PAGE: SISWA CONSIGNMENT -->
+            <div id="siswa-page-consignment" class="dashboard-page">
+                <div class="card-header-flex" style="margin-bottom: 1.5rem; border-bottom: 1.5px solid var(--gray-100); padding-bottom: 0.75rem;">
+                    <div>
+                        <h2 style="font-weight:700; margin-bottom: 0px;">Barang Titipan Saya</h2>
+                        <p style="color:var(--gray-500); font-size:0.9rem; margin-bottom: 0px;">Pantau status penjualan barang yang Anda titipkan jualan di KOPSISTA secara real-time.</p>
+                    </div>
+                    <button class="btn-primary" onclick="openAddSiswaConsignmentModal()"><i data-lucide="plus"></i> Ajukan Titip Barang Jualan</button>
+                </div>
+
+                <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 1.5rem;">
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h4>Total Unit Dititip</h4>
+                            <p id="siswa-cons-total-qty">0 unit</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h4>Unit Terjual</h4>
+                            <p id="siswa-cons-sold-qty" style="color:var(--success)">0 unit</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h4>Hasil Kotor Saya</h4>
+                            <p id="siswa-cons-total-earnings" style="color:var(--primary-dark)">Rp 0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h4>Belum Dibayarkan</h4>
+                            <p id="siswa-cons-unpaid" style="color:var(--warning)">Rp 0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-columns">
+                    <div class="dashboard-column-card" style="flex: 1.5;">
+                        <h3>Daftar Barang Titipan Anda</h3>
+                        <div class="table-responsive" style="margin-top: 1rem;">
+                            <table class="custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nama Barang</th>
+                                        <th>Kategori</th>
+                                        <th>Harga Pemilik</th>
+                                        <th>Harga Jual</th>
+                                        <th>Jumlah Dititip</th>
+                                        <th>Jumlah Terjual</th>
+                                        <th>Sisa Stok</th>
+                                        <th>Tanggal Titip</th>
+                                        <th>Status Pembayaran</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="siswa-cons-list-body">
+                                    <!-- Siswa consignment list -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-column-card" style="flex: 1;">
+                        <h3>Riwayat Penjualan Real-time</h3>
+                        <div class="table-responsive" style="margin-top: 1rem; max-height: 250px; overflow-y: auto;">
+                            <table class="custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Tanggal & Waktu</th>
+                                        <th>Nama Barang</th>
+                                        <th>Kuantitas</th>
+                                        <th>Pendapatan</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="siswa-cons-sales-body">
+                                    <!-- Siswa consignment sales log -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Siswa Consignment Requests Table -->
+                <div class="dashboard-column-card" style="margin-top: 1.5rem;">
+                    <h3 style="font-size:1.05rem; font-weight:700; border-bottom:1px solid var(--gray-100); padding-bottom:0.5rem; margin-bottom:1rem;">Status Pengajuan Barang Titipan Anda</h3>
+                    <div class="table-responsive">
+                        <table class="custom-table">
+                            <thead>
+                                <tr>
+                                    <th>Tanggal Pengajuan</th>
+                                    <th>Nama Barang</th>
+                                    <th>Kategori</th>
+                                    <th>Bagian Siswa</th>
+                                    <th>Jumlah Dititip</th>
+                                    <th>Status</th>
+                                    <th>Keterangan / Catatan Admin</th>
+                                </tr>
+                            </thead>
+                            <tbody id="siswa-cons-requests-body">
+                                <!-- Student consignment requests -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB-PAGE: ATTENDANCE & STATS -->
+            <div id="siswa-page-attendance" class="dashboard-page">
+                <div style="border-bottom:1.5px solid var(--gray-100); padding-bottom: 0.75rem; margin-bottom:1.5rem;">
+                    <h2 style="font-weight:700;">Rekap Kehadiran Siswa</h2>
+                    <p style="color:var(--gray-500); font-size:0.9rem;">Statistik kehadiran, ketidakhadiran, sakit, dan izin Anda secara real-time.</p>
+                </div>
+
+                <div class="dashboard-columns">
+                    <!-- Left: Stats Overview -->
+                    <div class="dashboard-column-card" style="display:flex; flex-direction:column; justify-content:space-between;">
+                        <div>
+                            <h3 style="margin-bottom: 1.5rem; font-weight:700;">Statistik Persentase Kehadiran</h3>
+                            <div style="display:flex; flex-direction:column; align-items:center; gap: 1rem; margin-bottom:1.5rem;">
+                                <div id="siswa-attendance-percentage" style="font-size: 3rem; font-weight:800; color:var(--primary-dark)">100%</div>
+                                <div style="width:100%; background:var(--gray-100); height:12px; border-radius:10px; overflow:hidden;">
+                                    <div id="siswa-attendance-bar" style="background:var(--primary); height:100%; width: 100%; transition: var(--transition);"></div>
+                                </div>
+                                <span style="font-size:0.85rem; color:var(--gray-500);">Rasio Kehadiran terhadap total hari efektif belajar</span>
+                            </div>
+                        </div>
+                        
+                        <div class="stats-grid" style="grid-template-columns: repeat(2, 1fr); margin-bottom:0; gap:0.75rem;">
+                            <div class="stat-card" style="padding:1rem; border-color:var(--gray-100);">
+                                <div class="stat-info">
+                                    <h4>Hadir</h4>
+                                    <p id="siswa-stat-hadir" style="font-size:1.5rem; color:var(--success)">0</p>
+                                </div>
+                            </div>
+                            <div class="stat-card" style="padding:1rem; border-color:var(--gray-100);">
+                                <div class="stat-info">
+                                    <h4>Sakit</h4>
+                                    <p id="siswa-stat-sakit" style="font-size:1.5rem; color:var(--secondary-dark)">0</p>
+                                </div>
+                            </div>
+                            <div class="stat-card" style="padding:1rem; border-color:var(--gray-100);">
+                                <div class="stat-info">
+                                    <h4>Izin</h4>
+                                    <p id="siswa-stat-izin" style="font-size:1.5rem; color:var(--warning)">0</p>
+                                </div>
+                            </div>
+                            <div class="stat-card" style="padding:1rem; border-color:var(--gray-100);">
+                                <div class="stat-info">
+                                    <h4>Alfa</h4>
+                                    <p id="siswa-stat-alfa" style="font-size:1.5rem; color:var(--danger)">0</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Attendance log list -->
+                    <div class="dashboard-column-card">
+                        <h3 style="margin-bottom: 1.5rem; font-weight:700;">Jurnal Log Absensi Kehadiran</h3>
+                        <div class="table-responsive" style="max-height: 380px; overflow-y:auto;">
+                            <table class="custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Hari / Tanggal</th>
+                                        <th>Status Kehadiran</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="siswa-attendance-table-body">
+                                    <!-- Siswa attendance table rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB-PAGE: ABOUT APP (SISWA) -->
+            <div id="siswa-page-about" class="dashboard-page">
+                <div style="border-bottom:1.5px solid var(--gray-100); padding-bottom: 0.75rem; margin-bottom:1.5rem;">
+                    <h2 style="font-weight:700;">Tentang Aplikasi</h2>
+                    <p style="color:var(--gray-500); font-size:0.9rem;">Informasi sistem aplikasi dan profil pengembang.</p>
+                </div>
+                <div class="dashboard-column-card" style="max-width: 600px; margin: 0 auto; padding: 2rem;">
+                    <div style="text-align:center; margin-bottom: 1.5rem;">
+                        <img src="school_logo.png" alt="Logo Koperasi" style="width:80px; height:80px; border-radius:50%; background:var(--primary-light); padding:4px; margin-bottom:1rem;">
+                        <h2 style="font-weight:700; color:var(--primary-dark); font-size:1.5rem;" class="about-coop-name-shared">KOPSISTA (KOPERASI SISWA THHK)</h2>
+                        <span class="badge present" style="margin-top:0.5rem; display:inline-block;">Versi 3.0 (Aktif)</span>
+                    </div>
+                    <div style="border-top: 1px solid var(--gray-100); padding-top:1.5rem;">
+                        <h4 style="font-weight:700; margin-bottom:0.75rem; color:var(--gray-700);"><i data-lucide="code" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;"></i> Pengembang Aplikasi</h4>
+                        <div style="background:var(--gray-50); border:1px solid var(--gray-200); border-radius:8px; padding:1.25rem; margin-bottom:1.5rem; text-align:left;">
+                            <div style="font-weight:700; font-size:1.05rem; color:var(--dark);" class="about-dev-name-shared">Yanuar Evanto</div>
+                            <div style="font-size:0.85rem; color:var(--gray-600); margin:0.35rem 0 0.75rem 0;" class="about-dev-bio-shared">Pengembang sistem KOPSISTA (KOPERASI SISWA THHK) & Absensi Anggota Kopsis.</div>
+                            <div style="display:flex; flex-wrap:wrap; gap:1rem; font-size:0.82rem; border-top:1px solid var(--gray-200); padding-top:0.75rem;">
+                                <span style="color:var(--gray-500);"><strong style="color:var(--dark);">No. HP/WA:</strong> <span class="about-dev-contact-shared">0812-3456-7890</span></span>
+                                <span style="color:var(--gray-500);"><strong style="color:var(--dark);">Social Media:</strong> <span class="about-dev-social-shared">@yanuar_evanto</span></span>
+                            </div>
+                        </div>
+                        <p style="font-size:0.8rem; color:var(--gray-400); text-align:center; margin-top:2rem;">Hak Cipta &copy; 2026 KOPSISTA Tegal. Dilindungi Undang-Undang.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB-PAGE: PROFILE SETTINGS -->
+            <div id="siswa-page-profile" class="dashboard-page">
+                <div style="border-bottom:1.5px solid var(--gray-100); padding-bottom: 0.75rem; margin-bottom:1.5rem;">
+                    <h2 style="font-weight:700;">Pengaturan Profil & Akun Siswa</h2>
+                    <p style="color:var(--gray-500); font-size:0.9rem;">Ubah foto profil atau atur kata sandi baru untuk mengamankan akun Anda.</p>
+                </div>
+
+                <div class="profile-card-layout">
+                    <!-- Left: Profile Photo update -->
+                    <div class="profile-avatar-wrapper">
+                        <h3 style="font-size:1rem; margin-bottom:1rem; font-weight:700;">Foto Profil Anda</h3>
+                        <img id="profile-avatar-img" src="" alt="Siswa Avatar" class="profile-avatar-large">
+                        <div>
+                            <input type="file" id="profile-photo-selector" class="file-input-hidden" accept="image/*" onchange="handleProfilePhotoUpload(event)">
+                            <button class="btn-upload-photo" onclick="document.getElementById('profile-photo-selector').click()"><i data-lucide="image" style="width:14px; vertical-align:middle;"></i> Unggah Foto Baru</button>
+                        </div>
+                    </div>
+
+                    <!-- Right: Forms -->
+                    <div class="dashboard-column-card">
+                        <h3 style="font-size:1rem; margin-bottom: 1.25rem; border-bottom: 1px solid var(--gray-100); padding-bottom:0.5rem; font-weight:700;">Detail Profil & Ganti Password</h3>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="profile-username">Username Pengguna</label>
+                            <input type="text" id="profile-username" class="form-input" style="padding-left:1rem;" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="profile-name">Nama Lengkap</label>
+                            <input type="text" id="profile-name" class="form-input" style="padding-left:1rem;" disabled>
+                        </div>
+                        
+                        <h4 style="margin-top: 1.5rem; margin-bottom: 0.75rem; font-weight:700; color:var(--secondary-dark);">Ganti Kata Sandi Akun</h4>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="profile-old-password">Password Lama</label>
+                            <input type="password" id="profile-old-password" class="form-input" style="padding-left:1rem;" placeholder="Masukkan password lama">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="profile-new-password">Password Baru (Min. 6 Karakter)</label>
+                            <input type="password" id="profile-new-password" class="form-input" style="padding-left:1rem;" placeholder="Masukkan password baru">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="profile-confirm-password">Konfirmasi Password Baru</label>
+                            <input type="password" id="profile-confirm-password" class="form-input" style="padding-left:1rem;" placeholder="Ulangi password baru">
+                        </div>
+                        
+                        <button class="btn-primary" style="width:100%; justify-content:center; padding:0.75rem; margin-top:0.5rem;" onclick="saveSiswaPassword()"><i data-lucide="key-round"></i> Simpan Password Baru</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ================= GLOBAL MODALS ================= -->
+
+    <!-- MODAL: ADD/EDIT USER ACCOUNTS -->
+    <div id="modal-user" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span id="modal-user-title">Tambah Akun Pengguna</span>
+                <button class="btn-modal-close" onclick="closeModal('modal-user')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="user-form-mode" value="add">
+                
+                <div class="form-group">
+                    <label class="form-label" for="user-username">Username Login</label>
+                    <input type="text" id="user-username" class="form-input" style="padding-left:1rem;" placeholder="Contoh: yanuar123">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="user-name">Nama Lengkap Tampilan</label>
+                    <input type="text" id="user-name" class="form-input" style="padding-left:1rem;" placeholder="Contoh: Yanuar Evanto">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="user-password">Kata Sandi (Password)</label>
+                    <input type="password" id="user-password" class="form-input" style="padding-left:1rem;" placeholder="Isi untuk membuat/mengganti sandi">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="user-role">Tingkat Hak Akses</label>
+                    <select id="user-role" class="customer-select">
+                        <option value="admin">ADMIN (Hak Akses Penuh)</option>
+                        <option value="petugas_inti">PETUGAS KOPSIS INTI</option>
+                        <option value="anggota">ANGGOTA KOPSIS</option>
+                        <option value="siswa" selected>SISWA (Hak Akses Terbatas)</option>
+                    </select>
+                </div>
+                <div class="form-group" id="user-student-id-wrapper">
+                    <label class="form-label" for="user-student-id">Hubungkan dengan Data Siswa</label>
+                    <select id="user-student-id" class="customer-select">
+                        <!-- Populated dynamically -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="user-status">Status Aktivitas Akun</label>
+                    <select id="user-status" class="customer-select">
+                        <option value="true" selected>Aktif</option>
+                        <option value="false">Nonaktif / Blokir</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('modal-user')">Batal</button>
+                <button class="btn-primary" onclick="saveUserForm()">Simpan Akun</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD/EDIT STUDENT PROFILE -->
+    <div id="modal-student" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span id="modal-student-title">Tambah Data Siswa</span>
+                <button class="btn-modal-close" onclick="closeModal('modal-student')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="student-form-mode" value="add">
+                
+                <div class="form-group">
+                    <label class="form-label" for="student-id">ID / Nomor Induk Siswa</label>
+                    <input type="text" id="student-id" class="form-input" style="padding-left:1rem;" placeholder="Contoh: S005">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="student-name">Nama Lengkap Siswa</label>
+                    <input type="text" id="student-name" class="form-input" style="padding-left:1rem;" placeholder="Contoh: Muhammad Rian">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="student-class">Kelas</label>
+                    <select id="student-class" class="customer-select">
+                        <option value="X RPL 1">X RPL 1</option>
+                        <option value="X RPL 2">X RPL 2</option>
+                        <option value="XI RPL 1" selected>XI RPL 1</option>
+                        <option value="XI RPL 2">XI RPL 2</option>
+                        <option value="XII RPL 1">XII RPL 1</option>
+                        <option value="XII RPL 2">XII RPL 2</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="student-gender">Jenis Kelamin</label>
+                    <select id="student-gender" class="customer-select">
+                        <option value="Laki-laki" selected>Laki-laki</option>
+                        <option value="Perempuan">Perempuan</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="student-phone">Nomor Telepon HP</label>
+                    <input type="text" id="student-phone" class="form-input" style="padding-left:1rem;" placeholder="Contoh: 08123456789">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('modal-student')">Batal</button>
+                <button class="btn-primary" onclick="saveStudentForm()">Simpan Data</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD/EDIT COOPERATIVE PRODUCT -->
+    <div id="modal-product" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span id="modal-product-title">Tambah Barang Koperasi</span>
+                <button class="btn-modal-close" onclick="closeModal('modal-product')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="product-form-mode" value="add">
+                <input type="hidden" id="prod-img-b64" value="">
+                
+                <div class="form-group">
+                    <label class="form-label" for="prod-id">ID / Kode Barang</label>
+                    <input type="text" id="prod-id" class="form-input" style="padding-left:1rem;" placeholder="Contoh: P009">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="prod-name">Nama Barang</label>
+                    <input type="text" id="prod-name" class="form-input" style="padding-left:1rem;" placeholder="Contoh: Penghapus Pensil">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="prod-category">Kategori</label>
+                    <select id="prod-category" class="customer-select">
+                        <option value="Alat Tulis" selected>Alat Tulis</option>
+                        <option value="Atribut">Atribut</option>
+                        <option value="Makanan">Makanan</option>
+                        <option value="Minuman">Minuman</option>
+                        <option value="Lainnya">Lainnya</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="prod-cost">Harga Beli / Modal (Rp)</label>
+                    <input type="number" id="prod-cost" class="form-input" style="padding-left:1rem;" placeholder="Contoh: 1500">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="prod-price">Harga Jual (Rp)</label>
+                    <input type="number" id="prod-price" class="form-input" style="padding-left:1rem;" placeholder="Contoh: 2000">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="prod-profit">Pendapatan Bersih / Laba (Rp)</label>
+                    <input type="number" id="prod-profit" class="form-input" style="padding-left:1rem;" placeholder="Laba bersih per item. Contoh: 500">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="prod-stock">Stok Awal</label>
+                    <input type="number" id="prod-stock" class="form-input" style="padding-left:1rem;" placeholder="Contoh: 50">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Foto Produk (Opsional)</label>
+                    <input type="file" id="prod-img-file" class="customer-select" accept="image/*" onchange="handleProductImageUpload(event)">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('modal-product')">Batal</button>
+                <button class="btn-primary" onclick="saveProductForm()">Simpan Barang</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: POS TRANSACTION INVOICE RECEIPT -->
+    <div id="modal-invoice" class="modal-overlay">
+        <div class="modal-box" style="max-width: 360px;">
+            <div class="modal-header">
+                <span>Nota Belanja Koperasi</span>
+                <button class="btn-modal-close" onclick="closeModal('modal-invoice')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="invoice-receipt-container" style="background:#fff; padding:0.5rem; border-radius:4px; font-family: monospace;">
+                    <!-- Nota content loaded here dynamically -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" style="width:100%; justify-content:center; padding: 0.75rem;" onclick="closeModal('modal-invoice')">Selesai (Tutup)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD CONSIGNMENT -->
+    <div id="modal-consignment" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span>Daftarkan Barang Titipan Siswa</span>
+                <button class="btn-modal-close" onclick="closeModal('modal-consignment')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label" for="cons-student-id">Siswa Penitip</label>
+                    <select id="cons-student-id" class="customer-select" required>
+                        <!-- Populated dynamically -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="cons-prod-name">Nama Barang</label>
+                    <input type="text" id="cons-prod-name" class="form-input" style="padding-left:1rem;" placeholder="Contoh: Keripik Singkong Pedas" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="cons-category">Kategori</label>
+                    <select id="cons-category" class="customer-select">
+                        <option value="Makanan" selected>Makanan</option>
+                        <option value="Minuman">Minuman</option>
+                        <option value="Alat Tulis">Alat Tulis</option>
+                        <option value="Atribut">Atribut</option>
+                        <option value="Lainnya">Lainnya</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="cons-cost-price">Harga Pemilik / Bagian Uang Siswa (Rp)</label>
+                    <input type="number" id="cons-cost-price" class="form-input" style="padding-left:1rem;" placeholder="Contoh: 4000" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="cons-selling-price">Harga Jual ke Pembeli (Rp)</label>
+                    <input type="number" id="cons-selling-price" class="form-input" style="padding-left:1rem;" placeholder="Contoh: 5000" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="cons-profit">Pendapatan Bersih Koperasi (Rp)</label>
+                    <input type="number" id="cons-profit" class="form-input" style="padding-left:1rem;" placeholder="Laba koperasi per unit. Contoh: 1000">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="cons-qty">Jumlah Barang yang Dititipkan</label>
+                    <input type="number" id="cons-qty" class="form-input" style="padding-left:1rem;" placeholder="Contoh: 30" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="cons-datetime">Tanggal & Waktu Penitipan</label>
+                    <input type="datetime-local" id="cons-datetime" class="customer-select" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('modal-consignment')">Batal</button>
+                <button class="btn-primary" onclick="saveConsignmentForm()">Simpan Data Titipan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: SISWA ADD CONSIGNMENT REQUEST -->
+    <div id="modal-siswa-consignment" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span>Ajukan Titipan Barang Baru</span>
+                <button class="btn-modal-close" onclick="closeModal('modal-siswa-consignment')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label" for="siswa-cons-prod-name">Nama Barang</label>
+                    <input type="text" id="siswa-cons-prod-name" class="form-input" style="padding-left:1rem;" placeholder="Contoh: Keripik Pisang Keju" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="siswa-cons-category">Kategori</label>
+                    <select id="siswa-cons-category" class="customer-select">
+                        <option value="Makanan" selected>Makanan</option>
+                        <option value="Minuman">Minuman</option>
+                        <option value="Alat Tulis">Alat Tulis</option>
+                        <option value="Atribut">Atribut</option>
+                        <option value="Lainnya">Lainnya</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="siswa-cons-cost-price">Harga Pemilik / Bagian Uang Siswa (Rp)</label>
+                    <input type="number" id="siswa-cons-cost-price" class="form-input" style="padding-left:1rem;" placeholder="Berapa uang yang Anda terima per unit terjual. Contoh: 3000" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="siswa-cons-qty">Jumlah Unit yang Dititipkan</label>
+                    <input type="number" id="siswa-cons-qty" class="form-input" style="padding-left:1rem;" placeholder="Contoh: 20" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="siswa-cons-notes">Catatan Tambahan (Opsional)</label>
+                    <textarea id="siswa-cons-notes" class="form-input" style="padding:0.5rem 1rem; height:80px;" placeholder="Tulis deskripsi singkat barang Anda atau catatan lainnya..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('modal-siswa-consignment')">Batal</button>
+                <button class="btn-primary" onclick="saveSiswaConsignmentForm()"><i data-lucide="send"></i> Kirim Pengajuan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ADMIN CONFIRM APPROVE CONSIGNMENT -->
+    <div id="modal-admin-approve-consignment" class="modal-overlay">
+        <div class="modal-box" style="max-width: 400px;">
+            <div class="modal-header">
+                <span>Setujui Titipan Barang</span>
+                <button class="btn-modal-close" onclick="closeModal('modal-admin-approve-consignment')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="approve-req-id">
+                <div class="form-group">
+                    <label class="form-label">Nama Barang</label>
+                    <input type="text" id="approve-req-name" class="form-input" style="padding-left:1rem; background:var(--gray-100);" disabled>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Harga Pemilik (Bagian Siswa)</label>
+                    <input type="text" id="approve-req-cost" class="form-input" style="padding-left:1rem; background:var(--gray-100);" disabled>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="approve-selling-price">Harga Jual ke Pembeli (Rp)</label>
+                    <input type="number" id="approve-selling-price" class="form-input" style="padding-left:1rem;" placeholder="Tentukan harga jual di koperasi" required>
+                    <span style="font-size:0.78rem; color:var(--gray-500); display:block; margin-top:0.25rem;">Koperasi disarankan mengambil untung (markup), misal: Rp 3.500 jika harga pemilik Rp 3.000.</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="approve-profit-price">Pendapatan Bersih Koperasi (Rp)</label>
+                    <input type="number" id="approve-profit-price" class="form-input" style="padding-left:1rem;" placeholder="Laba koperasi per unit">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('modal-admin-approve-consignment')">Batal</button>
+                <button class="btn-primary" onclick="submitApproveConsignmentRequest()">Setujui & Daftarkan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ADMIN REJECT CONSIGNMENT -->
+    <div id="modal-admin-reject-consignment" class="modal-overlay">
+        <div class="modal-box" style="max-width: 400px;">
+            <div class="modal-header">
+                <span>Tolak Titipan Barang</span>
+                <button class="btn-modal-close" onclick="closeModal('modal-admin-reject-consignment')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="reject-req-id">
+                <div class="form-group">
+                    <label class="form-label" for="reject-reason">Alasan Penolakan</label>
+                    <input type="text" id="reject-reason" class="form-input" style="padding-left:1rem;" placeholder="Contoh: Stok barang di koperasi sedang penuh" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('modal-admin-reject-consignment')">Batal</button>
+                <button class="btn-danger" onclick="submitRejectConsignmentRequest()">Tolak Pengajuan</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- MODAL: EXECUTE STUDENT PAYOUT -->
+    <div id="modal-payout" class="modal-overlay">
+        <div class="modal-box" style="max-width: 400px;">
+            <div class="modal-header">
+                <span>Pembayaran Bagi Hasil Siswa</span>
+                <button class="btn-modal-close" onclick="closeModal('modal-payout')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="payout-student-id">
+                <div class="form-group">
+                    <label class="form-label">Nama Siswa</label>
+                    <input type="text" id="payout-student-name" class="form-input" style="padding-left:1rem;" disabled>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Estimasi Uang Hak Siswa (Belum Dibayar)</label>
+                    <input type="text" id="payout-estimated-amount" class="form-input" style="padding-left:1rem;" disabled>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="payout-amount">Jumlah Uang Yang Diserahkan (Rp)</label>
+                    <input type="number" id="payout-amount" class="form-input" style="padding-left:1rem;" placeholder="Masukkan nominal pembayaran" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="payout-details">Catatan / Detail Pembayaran</label>
+                    <input type="text" id="payout-details" class="form-input" style="padding-left:1rem;" placeholder="Contoh: Penyerahan tunai lunas penjualan Roti Bakar">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('modal-payout')">Batal</button>
+                <button class="btn-primary" onclick="submitStudentPayout()">Proses Bayar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD FINANCIAL ADJUSTMENT -->
+    <div id="modal-adjustment" class="modal-overlay">
+        <div class="modal-box" style="max-width: 450px;">
+            <div class="modal-header">
+                <span>Pencatatan Keuntungan / Kerugian Manual</span>
+                <button class="btn-modal-close" onclick="closeModal('modal-adjustment')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label" for="adj-datetime">Tanggal & Waktu Transaksi</label>
+                    <input type="datetime-local" id="adj-datetime" class="customer-select" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="adj-type">Jenis Catatan Keuangan</label>
+                    <select id="adj-type" class="customer-select">
+                        <option value="Keuntungan" selected>Keuntungan (Pendapatan Tambahan)</option>
+                        <option value="Kerugian">Kerugian (Biaya / Pengeluaran / Barang Rusak)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="adj-category">Kategori Transaksi</label>
+                    <select id="adj-category" class="customer-select">
+                        <option value="Operasional" selected>Operasional</option>
+                        <option value="Kerusakan Barang">Kerusakan Barang</option>
+                        <option value="Selisih Kas">Selisih Kas</option>
+                        <option value="Peralatan">Peralatan</option>
+                        <option value="Lain-lain">Lain-lain</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="adj-amount">Nominal Uang (Rp)</label>
+                    <input type="number" id="adj-amount" class="form-input" style="padding-left:1rem;" placeholder="Masukkan nominal nominal" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="adj-description">Keterangan Detail</label>
+                    <input type="text" id="adj-description" class="form-input" style="padding-left:1rem;" placeholder="Contoh: Pembayaran listrik bulanan" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('modal-adjustment')">Batal</button>
+                <button class="btn-primary" onclick="saveAdjustmentForm()">Simpan Catatan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DB, logic layer links -->
+    <script src="database.js"></script>
+    <script src="app.js"></script>
+
+    <!-- Complete Cache & Service Worker Clear -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(registrations => {
+                for (const registration of registrations) {
+                    registration.unregister().then(unregistered => {
+                        if (unregistered) console.log('Successfully unregistered service worker.');
+                    });
+                }
+            });
+        }
+        if ('caches' in window) {
+            caches.keys().then(names => {
+                for (const name of names) {
+                    caches.delete(name).then(() => console.log('Deleted cache:', name));
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>
