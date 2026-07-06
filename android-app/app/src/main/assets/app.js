@@ -3756,5 +3756,19 @@ function init2WayProfitBindings() {
     }
 }
 
+window.wipeSalesHistoryUI = function() {
+    if (confirm("Apakah Anda yakin ingin mengosongkan seluruh data transaksi penjualan, data barang titipan, setoran shift, absensi petugas, dan penyesuaian keuangan?\n\nTindakan ini tidak bisa dibatalkan dan akan menyegarkan halaman!")) {
+        const res = window.db.wipeSalesAndFinancials();
+        if (res.success) {
+            showToast("Seluruh data penjualan dan keuangan berhasil dikosongkan!", "success");
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        } else {
+            showToast("Gagal mengosongkan data.", "error");
+        }
+    }
+};
+
 
 

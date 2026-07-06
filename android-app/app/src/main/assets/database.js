@@ -119,128 +119,16 @@ const DEFAULT_DATA = {
         { id: "P006", name: "Topi Sekolah SMA", category: "Atribut", price: 20000, costPrice: 16000, stock: 12, image: "" },
         { id: "P007", name: "Roti Sari Roti Srikaya", category: "Makanan", price: 6000, costPrice: 4800, stock: 10, image: "" },
         { id: "P008", name: "Teh Botol Sosro Sosro", category: "Minuman", price: 4000, costPrice: 3000, stock: 24, image: "" },
-        { id: "P009", name: "Keripik Singkong (Titipan)", category: "Makanan", price: 5000, costPrice: 4000, stock: 15, image: "", isConsigned: true, consignmentId: "CON-001", studentId: "S001" }
     ],
-    transactions: [
-        {
-            id: "TR-10001",
-            date: "2026-06-22T08:30:00.000Z",
-            studentId: "S001",
-            studentName: "Ahmad Fauzi",
-            items: [
-                { productId: "P001", name: "Buku Tulis Kiky", quantity: 2, price: 5000, costPrice: 4000 },
-                { productId: "P009", name: "Keripik Singkong (Titipan)", quantity: 1, price: 5000, costPrice: 4000 }
-            ],
-            totalAmount: 15000,
-            totalProfit: 3000,
-            cashierUsername: "Yanuar"
-        },
-        {
-            id: "TR-10002",
-            date: "2026-06-22T10:15:00.000Z",
-            studentId: "S002",
-            studentName: "Siti Aminah",
-            items: [
-                { productId: "P005", name: "Dasi Sekolah SMA", quantity: 1, price: 15000, costPrice: 12000 },
-                { productId: "P008", name: "Teh Botol Sosro Sosro", quantity: 2, price: 4000, costPrice: 3000 }
-            ],
-            totalAmount: 23000,
-            totalProfit: 5000,
-            cashierUsername: "Yanuar"
-        }
-    ],
-    attendance: [
-        { date: "2026-06-22", studentId: "S001", status: "Hadir" },
-        { date: "2026-06-22", studentId: "S002", status: "Hadir" },
-        { date: "2026-06-22", studentId: "S003", status: "Izin" },
-        { date: "2026-06-22", studentId: "S004", status: "Hadir" },
-        { date: "2026-06-23", studentId: "S001", status: "Hadir" },
-        { date: "2026-06-23", studentId: "S002", status: "Hadir" },
-        { date: "2026-06-23", studentId: "S003", status: "Hadir" },
-        { date: "2026-06-23", studentId: "S004", status: "Sakit" }
-    ],
+    transactions: [],
+    attendance: [],
     auditLogs: [
-        { id: "L-001", date: "2026-06-22T07:00:00.000Z", username: "System", role: "system", action: "Inisialisasi", details: "Database sistem Koperasi THHK dibuat pertama kali" },
-        { id: "L-002", date: "2026-06-22T08:00:00.000Z", username: "Yanuar", role: "admin", action: "Login", details: "Admin Yanuar login ke sistem" },
-        { id: "L-003", date: "2026-06-23T07:30:00.000Z", username: "siswa", role: "siswa", action: "Login", details: "Siswa Ahmad Fauzi login ke sistem" }
+        { id: "L-001", date: new Date().toISOString(), username: "System", role: "system", action: "Inisialisasi", details: "Database Koperasi KOPSISTA dibuat pertama kali secara bersih" }
     ],
-    consignments: [
-        {
-            id: "CON-001",
-            productId: "P009",
-            studentId: "S001",
-            studentName: "Ahmad Fauzi",
-            productName: "Keripik Singkong",
-            category: "Makanan",
-            costPrice: 4000,
-            sellingPrice: 5000,
-            consignedQty: 25,
-            soldQty: 10,
-            consignmentDate: "2026-06-22T08:00:00.000Z",
-            status: "Aktif",
-            payoutStatus: "Belum Dibayar"
-        }
-    ],
-    consignmentSales: [
-        {
-            id: "CS-001",
-            consignmentId: "CON-001",
-            productId: "P009",
-            productName: "Keripik Singkong",
-            studentId: "S001",
-            studentName: "Ahmad Fauzi",
-            quantity: 9,
-            sellingPrice: 5000,
-            costPrice: 4000,
-            earnings: 36000,
-            coopProfit: 9000,
-            date: "2026-06-22T08:45:00.000Z",
-            transactionId: "TR-Manual"
-        },
-        {
-            id: "CS-002",
-            consignmentId: "CON-001",
-            productId: "P009",
-            productName: "Keripik Singkong",
-            studentId: "S001",
-            studentName: "Ahmad Fauzi",
-            quantity: 1,
-            sellingPrice: 5000,
-            costPrice: 4000,
-            earnings: 4000,
-            coopProfit: 1000,
-            date: "2026-06-22T08:30:00.000Z",
-            transactionId: "TR-10001"
-        }
-    ],
-    consignmentPayouts: [
-        {
-            id: "PAY-001",
-            studentId: "S001",
-            studentName: "Ahmad Fauzi",
-            amount: 20000,
-            payoutDate: "2026-06-22T15:00:00.000Z",
-            details: "Pembayaran bagi hasil penjualan 5 unit awal"
-        }
-    ],
-    financialAdjustments: [
-        {
-            id: "ADJ-001",
-            date: "2026-06-22T16:00:00.000Z",
-            type: "Kerugian",
-            category: "Kerusakan Barang",
-            amount: 12000,
-            description: "2 botol Teh Botol pecah di gudang"
-        },
-        {
-            id: "ADJ-002",
-            date: "2026-06-23T09:00:00.000Z",
-            type: "Keuntungan",
-            category: "Operasional",
-            amount: 25000,
-            description: "Jasa print tugas siswa di koperasi"
-        }
-    ],
+    consignments: [],
+    consignmentSales: [],
+    consignmentPayouts: [],
+    financialAdjustments: [],
     petugasAttendance: [],
     petugasAttendanceRequests: [],
     schoolCalendar: [],
@@ -1141,6 +1029,28 @@ class KoperasiDB {
         this.addAuditLog(name, "petugas", "Laporan Akhir Hari", `Menyerahkan laporan kas akhir hari. Sistem: Rp ${expectedCash.toLocaleString('id-ID')}, Fisik: Rp ${realCash.toLocaleString('id-ID')}, Selisih: Rp ${diff.toLocaleString('id-ID')}`);
         
         return { success: true, report: reportObj };
+    }
+
+    wipeSalesAndFinancials() {
+        const data = this.getData();
+        data.transactions = [];
+        data.consignmentSales = [];
+        data.consignmentPayouts = [];
+        data.financialAdjustments = [];
+        data.endOfDayReports = [];
+        data.shiftDeposits = [];
+        data.consignments = [];
+        data.petugasAttendance = [];
+        data.petugasAttendanceRequests = [];
+        data.attendance = [];
+        
+        if (data.products) {
+            data.products = data.products.filter(p => !p.isConsigned);
+        }
+        
+        this.saveData(data);
+        this.addAuditLog("Yanuar", "admin", "Kosongkan Data Penjualan", "Mengosongkan seluruh data transaksi dan keuangan sistem");
+        return { success: true };
     }
 
     // ============================================================
