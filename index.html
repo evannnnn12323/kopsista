@@ -957,7 +957,8 @@
 
             <!-- SUB-PAGE: END OF DAY REPORT -->
             <div id="admin-page-endofday" class="dashboard-page">
-                <div class="card" style="max-width:800px; margin:0 auto;">
+                <!-- VIEW FOR TELLER / STAFF (Petugas Kopsis Inti) -->
+                <div id="eod-teller-view" class="card" style="max-width:800px; margin:0 auto; display:none;">
                     <div class="card-header">
                         <h3>Laporan Akhir Hari (Penjualan Kopsis)</h3>
                     </div>
@@ -991,6 +992,37 @@
                             </div>
                             
                             <button class="btn-primary" style="margin-top:1.5rem; width:100%;" onclick="submitEndOfDayReport()">Kunci Laporan Harian & Serahkan ke Admin</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW FOR ADMIN (Reviewer/Manager) -->
+                <div id="eod-admin-view" class="card" style="margin:0 auto; display:none;">
+                    <div class="card-header-flex" style="margin-bottom:1.5rem;">
+                        <div>
+                            <h3 style="margin:0;">Verifikasi &amp; Laporan Kas Harian (EOD)</h3>
+                            <p style="margin:0.25rem 0 0; font-size:0.85rem; color:var(--text-secondary);">Daftar penyerahan laporan uang laci kasir dari petugas kopsis di akhir hari.</p>
+                        </div>
+                    </div>
+                    <div class="card-body" style="padding:0;">
+                        <div class="table-responsive">
+                            <table class="custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Tanggal Laporan</th>
+                                        <th>Petugas Setor</th>
+                                        <th>Uang Sistem (Expected)</th>
+                                        <th>Uang Fisik (Real Cash)</th>
+                                        <th>Selisih (Discrepancy)</th>
+                                        <th>Status Laporan</th>
+                                        <th>Waktu Penyerahan</th>
+                                        <th style="width:120px;">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="eod-admin-reports-tbody">
+                                    <!-- Dynamic EOD reports list -->
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -1950,6 +1982,22 @@
             <div class="modal-footer">
                 <button class="btn-secondary" onclick="closeModal('modal-adjustment')">Batal</button>
                 <button class="btn-primary" onclick="saveAdjustmentForm()">Simpan Catatan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: DETAIL LAPORAN AKHIR HARI (EOD) -->
+    <div id="modal-eod-detail" class="modal-overlay">
+        <div class="modal-box" style="max-width: 600px;">
+            <div class="modal-header">
+                <span>Rincian Laporan Kas Harian (EOD)</span>
+                <button class="btn-modal-close" onclick="closeModal('modal-eod-detail')">&times;</button>
+            </div>
+            <div class="modal-body" id="eod-detail-modal-body">
+                <!-- Dynamic detail report content -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('modal-eod-detail')">Tutup</button>
             </div>
         </div>
     </div>

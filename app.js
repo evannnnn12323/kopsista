@@ -3179,6 +3179,21 @@ function getCanvasCoords(event) {
 
 // ================= END OF DAY REPORT =================
 window.renderEndOfDayTab = function() {
+    const user = state.currentUser;
+    const isAdmin = user && user.role === 'admin';
+    
+    if (isAdmin) {
+        document.getElementById('eod-teller-view').style.display = 'none';
+        document.getElementById('eod-admin-view').style.display = 'block';
+        renderEndOfDayAdminList();
+    } else {
+        document.getElementById('eod-teller-view').style.display = 'block';
+        document.getElementById('eod-admin-view').style.display = 'none';
+        renderEndOfDayTellerForm();
+    }
+};
+
+function renderEndOfDayTellerForm() {
     const todayStr = new Date().toISOString().split('T')[0];
     const txs = window.db.getTransactions().filter(t => t.date.startsWith(todayStr));
     const deposits = window.db.getShiftDeposits(todayStr);
@@ -3252,7 +3267,164 @@ window.renderEndOfDayTab = function() {
     bdDiv.id = 'eod-shift-breakdown';
     bdDiv.innerHTML = breakdownHtml;
     // Insert before the input physical cash area
-    container.insertBefore(bdDiv, document.getElementById('eod-discrepancy-box').parentElement.querySelector('.form-group'));
+    container.insertBefore(bdDiv, container.querySelector('.form-group'));
+}
+
+function renderEndOfDayAdminList() {
+    const reports = window.db.getEndOfDayReports();
+    const tbody = document.getElementById('eod-admin-reports-tbody');
+    
+    if (!tbody) return;
+    
+    if (reports.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:var(--gray-500); padding:2rem;">Belum ada laporan akhir hari yang diserahkan dari petugas.</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = reports.map(r => {
+        const dateStr = new Date(r.date).toLocaleDateString('id-ID', {
+            day: '2-digit', month: 'short', year: 'numeric'
+        });
+        const timeStr = new Date(r.submittedAt).toLocaleTimeString('id-ID', {
+            hour: '2-digit', minute: '2-digit'
+        });
+        
+        let statusBadge = '';
+        if (r.status === 'Balanced') statusBadge = '<span class="badge present">Sesuai</span>';
+        else if (r.status === 'Surplus') statusBadge = '<span class="badge warning">Surplus</span>';
+        else if (r.status === 'Shortage') statusBadge = '<span class="badge absent">Shortage</span>';
+        
+        const diffColor = r.discrepancy === 0 ? 'var(--success-color)' : (r.discrepancy > 0 ? 'var(--warning-color)' : 'var(--error-color)');
+        
+        return `
+            <tr>
+                <td><strong>${dateStr}</strong></td>
+                <td>${r.name} <small style="color:var(--gray-500); display:block;">(${r.username})</small></td>
+                <td>Rp ${r.expectedCash.toLocaleString('id-ID')}</td>
+                <td>Rp ${r.realCash.toLocaleString('id-ID')}</td>
+                <td style="color:${diffColor}; font-weight:700;">
+                    ${r.discrepancy >= 0 ? '+' : ''}Rp ${r.discrepancy.toLocaleString('id-ID')}
+                </td>
+                <td>${statusBadge}</td>
+                <td>${timeStr} WIB</td>
+                <td>
+                    <button class="btn-primary" style="padding:0.25rem 0.5rem; font-size:0.75rem;" onclick="viewEodDetail('${r.date}')">Lihat Rincian</button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+window.viewEodDetail = function(dateStr) {
+    const reports = window.db.getEndOfDayReports();
+    const report = reports.find(r => r.date === dateStr);
+    if (!report) return;
+    
+    const txs = window.db.getTransactions().filter(t => t.date.startsWith(dateStr));
+    const deposits = window.db.getShiftDeposits(dateStr);
+    
+    let breakdownHtml = '';
+    const shifts = ['Shift 1', 'Shift 2', 'Shift 3', 'Di Luar Shift'];
+    shifts.forEach(shift => {
+        const shiftTxs = txs.filter(t => t.shift === shift);
+        const shiftSystemTotal = shiftTxs.reduce((sum, t) => sum + (t.totalAmount || 0), 0);
+        
+        const shiftDeps = deposits.filter(d => d.shift === shift);
+        const shiftManualTotal = shiftDeps.reduce((sum, d) => sum + d.realAmount, 0);
+        const diff = shiftManualTotal - shiftSystemTotal;
+        const users = shiftDeps.map(d => d.username).join(', ') || '-';
+        
+        let diffColor = diff === 0 ? 'var(--success-color)' : (diff > 0 ? 'var(--warning-color)' : 'var(--error-color)');
+        
+        breakdownHtml += `
+            <tr>
+                <td><strong>${shift}</strong></td>
+                <td>Rp ${shiftSystemTotal.toLocaleString('id-ID')}</td>
+                <td>${shiftDeps.length > 0 ? 'Rp ' + shiftManualTotal.toLocaleString('id-ID') : '<em style="color:var(--gray-400)">Belum Setor</em>'}</td>
+                <td style="color:${shiftDeps.length > 0 ? diffColor : 'var(--text-secondary)'}; font-weight:bold;">
+                    ${shiftDeps.length > 0 ? 'Rp ' + diff.toLocaleString('id-ID') : '-'}
+                </td>
+                <td>${users}</td>
+            </tr>
+        `;
+    });
+    
+    let discrepancyText = '';
+    let discrepancyClass = '';
+    if (report.discrepancy === 0) {
+        discrepancyText = 'Uang fisik sesuai dengan total transaksi hari ini (Sesuai).';
+        discrepancyClass = 'badge present';
+    } else if (report.discrepancy > 0) {
+        discrepancyText = `Terdapat kelebihan uang kas sebesar Rp ${report.discrepancy.toLocaleString('id-ID')} (Surplus).`;
+        discrepancyClass = 'badge warning';
+    } else {
+        discrepancyText = `Terdapat kekurangan uang kas sebesar Rp ${Math.abs(report.discrepancy).toLocaleString('id-ID')} (Shortage).`;
+        discrepancyClass = 'badge absent';
+    }
+
+    const container = document.getElementById('eod-detail-modal-body');
+    container.innerHTML = `
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.5rem; background:var(--gray-50); padding:1rem; border-radius:6px; border:1px solid var(--gray-200); font-size:0.9rem;">
+            <div>
+                <small style="color:var(--gray-500); display:block;">Tanggal Laporan</small>
+                <strong>${new Date(report.date).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' })}</strong>
+            </div>
+            <div>
+                <small style="color:var(--gray-500); display:block;">Petugas Setor</small>
+                <strong>${report.name} (${report.username})</strong>
+            </div>
+            <div>
+                <small style="color:var(--gray-500); display:block;">Waktu Penyerahan</small>
+                <span>${new Date(report.submittedAt).toLocaleTimeString('id-ID')} WIB</span>
+            </div>
+            <div>
+                <small style="color:var(--gray-500); display:block;">Status Laporan</small>
+                <span class="${discrepancyClass}">${report.status}</span>
+            </div>
+        </div>
+        
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.75rem; margin-bottom:1.5rem; text-align:center;">
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:0.75rem; border-radius:6px;">
+                <small style="color:var(--gray-500); font-size:0.8rem;">Total Uang Sistem</small>
+                <div style="font-weight:700; font-size:1.05rem; color:var(--primary-dark); margin-top:0.25rem;">Rp ${report.expectedCash.toLocaleString('id-ID')}</div>
+            </div>
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:0.75rem; border-radius:6px;">
+                <small style="color:var(--gray-500); font-size:0.8rem;">Total Uang Fisik</small>
+                <div style="font-weight:700; font-size:1.05rem; color:var(--success-dark); margin-top:0.25rem;">Rp ${report.realCash.toLocaleString('id-ID')}</div>
+            </div>
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:0.75rem; border-radius:6px;">
+                <small style="color:var(--gray-500); font-size:0.8rem;">Selisih</small>
+                <div style="font-weight:700; font-size:1.05rem; color:${report.discrepancy === 0 ? 'var(--success)' : (report.discrepancy > 0 ? 'var(--warning-dark)' : 'var(--danger-dark)')}; margin-top:0.25rem;">
+                    ${report.discrepancy >= 0 ? '+' : ''}Rp ${report.discrepancy.toLocaleString('id-ID')}
+                </div>
+            </div>
+        </div>
+        
+        <p style="font-size:0.85rem; margin-bottom:1.5rem; background:#fff7ed; border-left:4px solid #f97316; padding:0.5rem 0.75rem; border-radius:0 4px 4px 0; color:#c2410c;">
+            <strong>Catatan Audit:</strong> ${discrepancyText}
+        </p>
+
+        <h4 style="margin-bottom:0.75rem; font-size:0.95rem;">Rincian Penjualan & Setoran per Shift</h4>
+        <div class="table-responsive">
+            <table class="custom-table" style="font-size:0.8rem;">
+                <thead>
+                    <tr>
+                        <th>Shift / Waktu</th>
+                        <th>Penjualan Sistem</th>
+                        <th>Setoran Manual (Fisik)</th>
+                        <th>Selisih (Manual - Sistem)</th>
+                        <th>Petugas Setor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${breakdownHtml}
+                </tbody>
+            </table>
+        </div>
+    `;
+    
+    const modal = document.getElementById('modal-eod-detail');
+    modal.classList.add('active');
 };
 
 window.submitEndOfDayReport = function() {
@@ -3265,35 +3437,40 @@ window.submitEndOfDayReport = function() {
     
     const todayStr = new Date().toISOString().split('T')[0];
     const txs = window.db.getTransactions().filter(t => t.date.startsWith(todayStr));
-    let expectedCash = txs.reduce((sum, t) => sum + t.total, 0);
+    let expectedCash = txs.reduce((sum, t) => sum + (t.totalAmount || 0), 0);
     
-    const diff = realCash - expectedCash;
-    const box = document.getElementById('eod-discrepancy-box');
-    const title = document.getElementById('eod-discrepancy-title');
-    const text = document.getElementById('eod-discrepancy-text');
-    
-    box.style.display = 'block';
-    if (diff === 0) {
-        box.style.background = 'var(--success-color)';
-        box.style.color = 'white';
-        title.textContent = 'Saldo Sesuai (Balance)';
-        text.textContent = 'Uang fisik sesuai dengan total transaksi hari ini.';
-    } else if (diff > 0) {
-        box.style.background = 'var(--warning-color)';
-        box.style.color = 'white';
-        title.textContent = 'Kelebihan Uang (Surplus)';
-        text.textContent = 'Terdapat kelebihan uang kas sebesar Rp ' + diff.toLocaleString('id-ID') + '.';
+    const res = window.db.submitEndOfDayReport(state.currentUser.username, state.currentUser.name, expectedCash, realCash);
+    if (res.success) {
+        showToast('Laporan akhir hari berhasil diserahkan dan dicatat di sistem.', 'success');
+        
+        const diff = realCash - expectedCash;
+        const box = document.getElementById('eod-discrepancy-box');
+        const title = document.getElementById('eod-discrepancy-title');
+        const text = document.getElementById('eod-discrepancy-text');
+        
+        box.style.display = 'block';
+        if (diff === 0) {
+            box.style.background = 'var(--success-color)';
+            box.style.color = 'white';
+            title.textContent = 'Saldo Sesuai (Balance)';
+            text.textContent = 'Uang fisik sesuai dengan total transaksi hari ini.';
+        } else if (diff > 0) {
+            box.style.background = 'var(--warning-color)';
+            box.style.color = 'white';
+            title.textContent = 'Kelebihan Uang (Surplus)';
+            text.textContent = 'Terdapat kelebihan uang kas sebesar Rp ' + diff.toLocaleString('id-ID') + '. Kelebihan ini telah dicatat otomatis di Laporan Keuangan.';
+        } else {
+            box.style.background = 'var(--error-color)';
+            box.style.color = 'white';
+            title.textContent = 'Kekurangan Uang (Shortage)';
+            text.textContent = 'Terdapat kekurangan uang kas sebesar Rp ' + Math.abs(diff).toLocaleString('id-ID') + '. Kekurangan ini telah dicatat otomatis di Laporan Keuangan.';
+        }
+        
+        // Refresh view
+        renderEndOfDayTab();
     } else {
-        box.style.background = 'var(--error-color)';
-        box.style.color = 'white';
-        title.textContent = 'Kekurangan Uang (Shortage)';
-        text.textContent = 'Terdapat kekurangan uang kas sebesar Rp ' + Math.abs(diff).toLocaleString('id-ID') + '.';
+        showToast(res.message || 'Gagal menyimpan laporan.', 'error');
     }
-    
-    window.db.addAuditLog(state.currentUser.name, state.currentUser.role, 'Laporan Akhir Hari', 
-        'Submit laporan akhir hari ' + todayStr + '. Sistem: Rp' + expectedCash + ', Fisik: Rp' + realCash + ', Selisih: Rp' + diff);
-    
-    showToast('Laporan akhir hari telah diserahkan dan dicatat di sistem.', 'success');
 };
 
 // ================= SHIFT SALES MANUAL INPUT TAB =================

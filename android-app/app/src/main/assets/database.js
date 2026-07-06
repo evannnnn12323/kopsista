@@ -244,7 +244,8 @@ const DEFAULT_DATA = {
     petugasAttendance: [],
     petugasAttendanceRequests: [],
     schoolCalendar: [],
-    consignmentRequests: []
+    consignmentRequests: [],
+    endOfDayReports: []
 };
 
 // Gaji per pertemuan (bisa diubah admin)
@@ -280,6 +281,10 @@ class KoperasiDB {
         }
         if (!data.consignmentRequests) {
             data.consignmentRequests = [];
+            changed = true;
+        }
+        if (!data.endOfDayReports) {
+            data.endOfDayReports = [];
             changed = true;
         }
 
@@ -1065,6 +1070,77 @@ class KoperasiDB {
         this.saveData(data);
         this.addAuditLog("Yanuar", "admin", "Hapus Catatan Keuangan", `Menghapus catatan keuangan ${id}`);
         return { success: true };
+    }
+
+    // ============================================================
+    // END OF DAY (EOD) VERIFIKASI KAS HARIAN
+    // ============================================================
+    getEndOfDayReports() {
+        const data = this.getData();
+        if (!data.endOfDayReports) data.endOfDayReports = [];
+        return data.endOfDayReports.slice().sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
+    }
+
+    submitEndOfDayReport(username, name, expectedCash, realCash) {
+        const data = this.getData();
+        if (!data.endOfDayReports) data.endOfDayReports = [];
+        if (!data.financialAdjustments) data.financialAdjustments = [];
+        
+        const todayStr = new Date().toISOString().split('T')[0];
+        const diff = realCash - expectedCash;
+        
+        // Generate EOD ID
+        const eodId = "EOD-" + String(data.endOfDayReports.length + 1).padStart(3, '0');
+        
+        // Check if already submitted today
+        const existingIdx = data.endOfDayReports.findIndex(r => r.date === todayStr);
+        
+        const reportObj = {
+            id: existingIdx !== -1 ? data.endOfDayReports[existingIdx].id : eodId,
+            date: todayStr,
+            submittedAt: new Date().toISOString(),
+            username,
+            name,
+            expectedCash,
+            realCash,
+            discrepancy: diff,
+            status: diff === 0 ? "Balanced" : (diff > 0 ? "Surplus" : "Shortage")
+        };
+        
+        if (existingIdx !== -1) {
+            // Remove previous automatic financial adjustment for this EOD if it exists
+            const prevReport = data.endOfDayReports[existingIdx];
+            data.financialAdjustments = data.financialAdjustments.filter(a => !(a.description && a.description.includes(`EOD ID: ${prevReport.id}`)));
+            
+            // Update report
+            data.endOfDayReports[existingIdx] = reportObj;
+        } else {
+            data.endOfDayReports.push(reportObj);
+        }
+        
+        // Save EOD Report
+        this.saveData(data);
+        
+        // Add automatic financial adjustment if discrepancy exists
+        if (diff !== 0) {
+            const adjType = diff > 0 ? "Keuntungan" : "Kerugian";
+            const adjObj = {
+                id: "ADJ-" + String(data.financialAdjustments.length + 1).padStart(3, '0'),
+                date: new Date().toISOString(),
+                type: adjType,
+                category: "Selisih Kas Kasir",
+                amount: Math.abs(diff),
+                description: `[Auto EOD] Selisih kasir hari ini. EOD ID: ${reportObj.id}. Sistem: Rp ${expectedCash.toLocaleString('id-ID')}, Fisik: Rp ${realCash.toLocaleString('id-ID')}`
+            };
+            data.financialAdjustments.push(adjObj);
+            this.saveData(data);
+            
+            this.addAuditLog("System", "system", "Pencatatan Keuangan Manual", `Otomatis mencatat ${adjType} akibat selisih kas sebesar Rp ${Math.abs(diff).toLocaleString('id-ID')} (${reportObj.status})`);
+        }
+        
+        this.addAuditLog(name, "petugas", "Laporan Akhir Hari", `Menyerahkan laporan kas akhir hari. Sistem: Rp ${expectedCash.toLocaleString('id-ID')}, Fisik: Rp ${realCash.toLocaleString('id-ID')}, Selisih: Rp ${diff.toLocaleString('id-ID')}`);
+        
+        return { success: true, report: reportObj };
     }
 
     // ============================================================
