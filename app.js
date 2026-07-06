@@ -461,18 +461,27 @@ function renderConsignmentApprovalsDashboard() {
         const dateStr = new Date(r.date).toLocaleDateString('id-ID', {
             day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
         });
+        
+        const costPrice = r.costPrice !== undefined && r.costPrice !== null ? r.costPrice : 0;
+        const consignedQty = r.consignedQty !== undefined && r.consignedQty !== null ? r.consignedQty : 0;
+        const productName = r.productName || '';
+        const category = r.category || '';
+        const notes = r.notes || '';
+        const studentName = r.studentName || '';
+        const studentId = r.studentId || '';
+
         return `
             <tr>
                 <td><small>${dateStr}</small></td>
-                <td><strong>${r.studentName}</strong> <span style="font-size:0.75rem;color:var(--gray-500);">(${r.studentId})</span></td>
-                <td>${r.productName}</td>
-                <td>${r.category}</td>
-                <td><strong>${r.consignedQty}</strong> unit</td>
-                <td>Rp ${r.costPrice.toLocaleString('id-ID')}</td>
-                <td><small style="display:block; max-width:150px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${r.notes || ''}">${r.notes || '-'}</small></td>
+                <td><strong>${studentName}</strong> <span style="font-size:0.75rem;color:var(--gray-500);">(${studentId})</span></td>
+                <td>${productName}</td>
+                <td>${category}</td>
+                <td><strong>${consignedQty}</strong> unit</td>
+                <td>Rp ${costPrice.toLocaleString('id-ID')}</td>
+                <td><small style="display:block; max-width:150px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${notes}">${notes || '-'}</small></td>
                 <td>
                     <div style="display:flex; gap:0.25rem;">
-                        <button class="btn-success" style="padding:0.25rem 0.5rem; font-size:0.75rem;" onclick="openApproveRequestModal('${r.id}', '${r.productName}', ${r.costPrice})"><i data-lucide="check-circle" style="width:14px;height:14px;"></i> Setuju</button>
+                        <button class="btn-success" style="padding:0.25rem 0.5rem; font-size:0.75rem;" onclick="openApproveRequestModal('${r.id}', '${productName.replace(/'/g, "\\'")}', ${costPrice})"><i data-lucide="check-circle" style="width:14px;height:14px;"></i> Setuju</button>
                         <button class="btn-danger" style="padding:0.25rem 0.5rem; font-size:0.75rem;" onclick="openRejectRequestModal('${r.id}')"><i data-lucide="x-circle" style="width:14px;height:14px;"></i> Tolak</button>
                     </div>
                 </td>
@@ -2250,6 +2259,15 @@ function renderConsignmentRequestsAdmin() {
         const dateStr = new Date(r.date).toLocaleDateString('id-ID', {
             day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
         });
+        
+        const costPrice = r.costPrice !== undefined && r.costPrice !== null ? r.costPrice : 0;
+        const consignedQty = r.consignedQty !== undefined && r.consignedQty !== null ? r.consignedQty : 0;
+        const productName = r.productName || '';
+        const category = r.category || '';
+        const notes = r.notes || '';
+        const studentName = r.studentName || '';
+        const studentId = r.studentId || '';
+
         let statusBadge = '';
         if (r.status === 'Pending') statusBadge = '<span class="badge warning">Menunggu</span>';
         else if (r.status === 'Approved') statusBadge = '<span class="badge present">Disetujui</span>';
@@ -2259,7 +2277,7 @@ function renderConsignmentRequestsAdmin() {
         if (r.status === 'Pending') {
             actionBtns = `
                 <div style="display:flex; gap:0.25rem;">
-                    <button class="btn-success" style="padding:0.25rem 0.5rem; font-size:0.75rem;" onclick="openApproveRequestModal('${r.id}', '${r.productName}', ${r.costPrice})"><i data-lucide="check-circle" style="width:14px;height:14px;"></i> Setuju</button>
+                    <button class="btn-success" style="padding:0.25rem 0.5rem; font-size:0.75rem;" onclick="openApproveRequestModal('${r.id}', '${productName.replace(/'/g, "\\'")}', ${costPrice})"><i data-lucide="check-circle" style="width:14px;height:14px;"></i> Setuju</button>
                     <button class="btn-danger" style="padding:0.25rem 0.5rem; font-size:0.75rem;" onclick="openRejectRequestModal('${r.id}')"><i data-lucide="x-circle" style="width:14px;height:14px;"></i> Tolak</button>
                 </div>
             `;
@@ -2270,12 +2288,12 @@ function renderConsignmentRequestsAdmin() {
         return `
             <tr>
                 <td><small>${dateStr}</small></td>
-                <td><strong>${r.studentName}</strong> <span style="font-size:0.75rem;color:var(--gray-500);">(${r.studentId})</span></td>
-                <td>${r.productName}</td>
-                <td>${r.category}</td>
-                <td><strong>${r.consignedQty}</strong> unit</td>
-                <td>Rp ${r.costPrice.toLocaleString('id-ID')}</td>
-                <td><small style="display:block; max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${r.notes || ''}">${r.notes || '-'}</small></td>
+                <td><strong>${studentName}</strong> <span style="font-size:0.75rem;color:var(--gray-500);">(${studentId})</span></td>
+                <td>${productName}</td>
+                <td>${category}</td>
+                <td><strong>${consignedQty}</strong> unit</td>
+                <td>Rp ${costPrice.toLocaleString('id-ID')}</td>
+                <td><small style="display:block; max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${notes}">${notes || '-'}</small></td>
                 <td>${statusBadge}</td>
                 <td>${actionBtns}</td>
             </tr>
