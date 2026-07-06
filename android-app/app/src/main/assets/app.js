@@ -2565,10 +2565,24 @@ window.renderPetugasAttendanceTab = function() {
     const dd = String(today.getDate()).padStart(2, '0');
     const todayStr = `${yyyy}-${mm}-${dd}`;
 
+    const adminDateDiv = document.getElementById('pa-date-admin');
+    const lockedDateDiv = document.getElementById('pa-date-locked');
+    const dateDisplay = document.getElementById('pa-date-display');
+
     if (user && (user.role === 'petugas' || user.role === 'petugas_inti' || user.role === 'anggota')) {
         // Petugas: tanggal dikunci otomatis dari sistem
-        datePicker.value = todayStr;
-        datePicker.disabled = true;
+        if (adminDateDiv) adminDateDiv.style.display = 'none';
+        if (lockedDateDiv) lockedDateDiv.style.display = 'flex';
+        if (datePicker) {
+            datePicker.value = todayStr;
+            datePicker.disabled = true;
+        }
+        if (dateDisplay) {
+            const formatted = new Date(todayStr + 'T00:00:00').toLocaleDateString('id-ID', {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+            });
+            dateDisplay.textContent = formatted;
+        }
         
         // Cek apakah sudah ada pengajuan hari ini
         const allRequests = window.db.getData().petugasAttendanceRequests || [];
@@ -2616,21 +2630,19 @@ window.renderPetugasAttendanceTab = function() {
             saveBtn.setAttribute('onclick', 'submitPetugasAttendanceForm()');
             saveBtn.className = 'btn-primary';
         }
-        
-        // Sembunyikan tombol "Muat Tanggal"
-        const loadBtn = document.querySelector('button[onclick="loadPetugasAttendanceForm()"]');
-        if (loadBtn) {
-            loadBtn.style.display = 'none';
-        }
     } else {
         // Admin - sembunyikan banner jika ada
         const statusBanner = document.getElementById('pa-self-status-banner');
         if (statusBanner) statusBanner.style.display = 'none';
         
         // Admin
-        datePicker.disabled = false;
-        if (!datePicker.value) {
-            datePicker.value = todayStr;
+        if (adminDateDiv) adminDateDiv.style.display = 'flex';
+        if (lockedDateDiv) lockedDateDiv.style.display = 'none';
+        if (datePicker) {
+            datePicker.disabled = false;
+            if (!datePicker.value) {
+                datePicker.value = todayStr;
+            }
         }
         
         const saveBtn = document.querySelector('button[onclick="submitPetugasAttendanceForm()"]') || document.querySelector('button[onclick="savePetugasAttendanceForm()"]');
@@ -2638,11 +2650,6 @@ window.renderPetugasAttendanceTab = function() {
             saveBtn.innerHTML = '<i data-lucide="save"></i> Simpan Absensi';
             saveBtn.setAttribute('onclick', 'savePetugasAttendanceForm()');
             saveBtn.className = 'btn-success';
-        }
-        
-        const loadBtn = document.querySelector('button[onclick="loadPetugasAttendanceForm()"]');
-        if (loadBtn) {
-            loadBtn.style.display = '';
         }
     }
     
@@ -2940,7 +2947,7 @@ window.submitPetugasAttendanceForm = function() {
         tempSignatures = {};
         renderPetugasAttendanceTab(); // Re-render penuh agar banner status terupdate
     } else {
-        showToast("Gagal mengajukan absensi.", "error");
+        showToast(res.message || "Gagal mengajukan absensi.", "error");
     }
 };
 

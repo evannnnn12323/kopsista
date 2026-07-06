@@ -1182,6 +1182,20 @@ class KoperasiDB {
         const data = this.getData();
         if (!data.petugasAttendanceRequests) data.petugasAttendanceRequests = [];
 
+        // Proteksi tingkat DB: pastikan petugas tidak memanipulasi tanggal absensi lewat console/DOM
+        const userObj = data.users.find(u => u.username === username);
+        const isAdmin = userObj && userObj.role === 'admin';
+        if (!isAdmin) {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            const todayStr = `${yyyy}-${mm}-${dd}`;
+            if (date !== todayStr) {
+                return { success: false, message: "Anda hanya boleh mengirimkan kehadiran untuk hari ini!" };
+            }
+        }
+
         const reqId = "REQ-" + username + "-" + date.replace(/-/g, '');
         
         // Hapus data pengajuan hari yang sama jika ada sebelumnya
