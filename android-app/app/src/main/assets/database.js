@@ -999,7 +999,10 @@ class KoperasiDB {
         const req = data.consignmentRequests[idx];
         req.status = "Approved";
         
-        // Add to actual consignments (using addConsignment)
+        // Simpan status Approved terlebih dahulu agar tidak ter-overwrite oleh addConsignment
+        this.saveData(data);
+        
+        // Tambahkan ke tabel barang titipan aktif (addConsignment)
         const res = this.addConsignment({
             studentId: req.studentId,
             studentName: req.studentName,
@@ -1011,7 +1014,6 @@ class KoperasiDB {
             consignmentDate: new Date().toISOString()
         });
         
-        this.saveData(data);
         this.addAuditLog("Yanuar", "admin", "Setujui Titipan", `Menyetujui titipan barang: ${req.productName} dari ${req.studentName}`);
         return { success: true, consignment: res.consignment };
     }

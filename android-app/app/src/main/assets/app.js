@@ -436,6 +436,50 @@ function renderAdminDashboard() {
 
     // Muat antrean persetujuan absensi petugas
     renderAttendanceApprovals();
+    
+    // Muat antrean persetujuan titipan barang siswa
+    renderConsignmentApprovalsDashboard();
+}
+
+function renderConsignmentApprovalsDashboard() {
+    const requests = window.db.getConsignmentRequests().filter(r => r.status === 'Pending');
+    const card = document.getElementById('dashboard-consignment-approvals-card');
+    const tbody = document.getElementById('dashboard-consignment-approvals-body');
+    const badge = document.getElementById('pa-cons-approval-badge');
+
+    if (!card || !tbody || !badge) return;
+
+    if (requests.length === 0) {
+        card.style.display = 'none';
+        return;
+    }
+
+    card.style.display = 'block';
+    badge.textContent = requests.length;
+
+    tbody.innerHTML = requests.map(r => {
+        const dateStr = new Date(r.date).toLocaleDateString('id-ID', {
+            day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+        });
+        return `
+            <tr>
+                <td><small>${dateStr}</small></td>
+                <td><strong>${r.studentName}</strong> <span style="font-size:0.75rem;color:var(--gray-500);">(${r.studentId})</span></td>
+                <td>${r.productName}</td>
+                <td>${r.category}</td>
+                <td><strong>${r.consignedQty}</strong> unit</td>
+                <td>Rp ${r.costPrice.toLocaleString('id-ID')}</td>
+                <td><small style="display:block; max-width:150px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${r.notes || ''}">${r.notes || '-'}</small></td>
+                <td>
+                    <div style="display:flex; gap:0.25rem;">
+                        <button class="btn-success" style="padding:0.25rem 0.5rem; font-size:0.75rem;" onclick="openApproveRequestModal('${r.id}', '${r.productName}', ${r.costPrice})"><i data-lucide="check-circle" style="width:14px;height:14px;"></i> Setuju</button>
+                        <button class="btn-danger" style="padding:0.25rem 0.5rem; font-size:0.75rem;" onclick="openRejectRequestModal('${r.id}')"><i data-lucide="x-circle" style="width:14px;height:14px;"></i> Tolak</button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+    safeCreateIcons();
 }
 
 function renderAttendanceApprovals() {
@@ -1654,7 +1698,7 @@ function renderSiswaCatalog() {
 
 // 2. SISWA PURCHASE HISTORY
 function renderSiswaHistory() {
-    const studentId = state.currentUser.studentId;
+    const studentId = state.currentUser.studentId || state.currentUser.username;
     const txs = window.db.getTransactions().filter(t => t.studentId === studentId);
     const tbody = document.getElementById('siswa-history-table-body');
     
@@ -1676,7 +1720,7 @@ function renderSiswaHistory() {
 
 // 3. SISWA ATTENDANCE & STATS
 function renderSiswaAttendance() {
-    const studentId = state.currentUser.studentId;
+    const studentId = state.currentUser.studentId || state.currentUser.username;
     const attendance = window.db.getAttendance().filter(a => a.studentId === studentId);
     
     // Stats calculation
@@ -2276,7 +2320,11 @@ window.submitApproveConsignmentRequest = function() {
     if (res.success) {
         showToast("Titipan barang berhasil disetujui!");
         closeModal('modal-admin-approve-consignment');
-        renderConsignmentTab();
+        if (state.activeTab === 'dashboard') {
+            renderAdminDashboard();
+        } else {
+            renderConsignmentTab();
+        }
     } else {
         showToast(res.message || "Gagal menyetujui.", "error");
     }
@@ -2302,7 +2350,11 @@ window.submitRejectConsignmentRequest = function() {
     if (res.success) {
         showToast("Titipan barang telah ditolak.");
         closeModal('modal-admin-reject-consignment');
-        renderConsignmentTab();
+        if (state.activeTab === 'dashboard') {
+            renderAdminDashboard();
+        } else {
+            renderConsignmentTab();
+        }
     } else {
         showToast(res.message || "Gagal menolak.", "error");
     }
@@ -2361,7 +2413,7 @@ window.saveSiswaConsignmentForm = function() {
 
 // ================= SISWA CONSIGNMENT VIEW =================
 window.renderSiswaConsignment = function() {
-    const studentId = state.currentUser.studentId;
+    const studentId = state.currentUser.studentId || state.currentUser.username;
     const consignments = window.db.getConsignments().filter(c => c.studentId === studentId);
     const sales = window.db.getConsignmentSales().filter(s => s.studentId === studentId);
     const payouts = window.db.getConsignmentPayouts().filter(p => p.studentId === studentId);
