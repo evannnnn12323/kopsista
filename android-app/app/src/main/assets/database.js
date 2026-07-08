@@ -1081,7 +1081,7 @@ class KoperasiDB {
         
         // Simple synchronous hashing helper hashPassword is declared at the top of database.js
         const hashed = hashPassword(password);
-        return admins.some(a => a.password === hashed);
+        return admins.some(a => a.passwordHash === hashed);
     }
 
     // ============================================================
