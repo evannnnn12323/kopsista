@@ -1077,7 +1077,7 @@ class KoperasiDB {
     verifyAdminPassword(password) {
         if (!password) return false;
         const data = this.getData();
-        const admins = data.users.filter(u => u.role === 'admin' && u.isActive);
+        const admins = data.users.filter(u => u.role === 'admin' && u.isActive !== false);
         
         // Simple synchronous hashing helper hashPassword is declared at the top of database.js
         const hashed = hashPassword(password);
