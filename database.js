@@ -176,14 +176,14 @@ class KoperasiDB {
             changed = true;
         }
 
-        // Re-seed siswa jika kosong (akibat localStorage lama / data hilang)
-        if (!data.students || data.students.length === 0) {
+        // Re-seed siswa jika belum ada di database (akibat localStorage lama / data hilang)
+        if (!data.students) {
             data.students = JSON.parse(JSON.stringify(DEFAULT_DATA.students));
             changed = true;
         }
 
-        // Re-seed produk jika kosong (akibat localStorage lama / data hilang)
-        if (!data.products || data.products.length === 0) {
+        // Re-seed produk jika belum ada di database (akibat localStorage lama / data hilang)
+        if (!data.products) {
             data.products = JSON.parse(JSON.stringify(DEFAULT_DATA.products));
             changed = true;
         }
