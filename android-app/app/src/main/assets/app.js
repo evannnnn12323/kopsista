@@ -140,6 +140,7 @@ function navigateTo(viewName) {
     
     if (viewName === 'login') {
         state.currentUser = null;
+        sessionStorage.removeItem('kopsista_current_user');
         clearTimeout(state.idleTimer);
         document.getElementById('login-password').value = '';
     } else {
@@ -1785,6 +1786,7 @@ window.handleProfilePhotoUpload = function(evt) {
             
             // Update current state
             state.currentUser.photo = base64Url;
+            sessionStorage.setItem('kopsista_current_user', JSON.stringify(state.currentUser));
             
             // Re-render
             renderHeaderProfile();
@@ -1908,6 +1910,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const res = window.db.login(userVal, passVal);
         if (res.success) {
             state.currentUser = res.user;
+            sessionStorage.setItem('kopsista_current_user', JSON.stringify(res.user));
             showToast(`Selamat datang, ${res.user.name}! 👋`);
             
             if (res.user.role === 'admin') {
@@ -1927,7 +1930,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
     init2WayProfitBindings();
 
-    // Default to Login view
+    // Check for persisted session in sessionStorage
+    const savedUser = sessionStorage.getItem('kopsista_current_user');
+    if (savedUser) {
+        try {
+            const user = JSON.parse(savedUser);
+            // Verify user still exists in DB and is active
+            const u = window.db.getData().users.find(x => x.username === user.username);
+            if (u && u.isActive) {
+                state.currentUser = user;
+                if (user.role === 'admin') {
+                    navigateTo('admin');
+                    switchAdminTab('dashboard');
+                } else if (user.role === 'petugas' || user.role === 'petugas_inti' || user.role === 'anggota') {
+                    navigateTo('admin');
+                    switchAdminTab('pos');
+                } else {
+                    navigateTo('siswa');
+                    switchSiswaTab('catalog');
+                }
+                showToast(`Sesi aktif dipulihkan: ${user.name}`);
+                return;
+            }
+        } catch(e) {
+            sessionStorage.removeItem('kopsista_current_user');
+        }
+    }
+
+    // Default to Login view if no session found
     navigateTo('login');
 });
 
