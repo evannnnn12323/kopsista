@@ -699,10 +699,29 @@ window.deleteUserAccount = function(username) {
 };
 
 // 3. STUDENT MANAGEMENT TAB
-function renderStudentsTab() {
+function renderStudentsTab(searchQuery = '') {
     const students = window.db.getStudents();
+    
+    // Clear search box on empty query initialization
+    if (searchQuery === '') {
+        const searchInput = document.getElementById('student-search-input');
+        if (searchInput) searchInput.value = '';
+    }
+
+    const filtered = students.filter(s => {
+        const q = searchQuery.toLowerCase();
+        return s.id.toLowerCase().includes(q) ||
+               s.name.toLowerCase().includes(q) ||
+               s.class.toLowerCase().includes(q);
+    });
+
     const tbody = document.getElementById('students-table-body');
-    tbody.innerHTML = students.map(s => `
+    if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--gray-500); padding: 2rem 0;">Siswa tidak ditemukan.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = filtered.map(s => `
         <tr>
             <td><strong>${s.id}</strong></td>
             <td>
@@ -722,6 +741,11 @@ function renderStudentsTab() {
     `).join('');
     safeCreateIcons();
 }
+
+window.filterStudentsTableUI = function() {
+    const query = document.getElementById('student-search-input').value;
+    renderStudentsTab(query);
+};
 
 window.openAddStudentModal = function() {
     const modal = document.getElementById('modal-student');

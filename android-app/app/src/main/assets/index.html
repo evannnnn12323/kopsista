@@ -814,9 +814,15 @@
 
             <!-- SUB-PAGE: STUDENT MANAGEMENT -->
             <div id="admin-page-students" class="dashboard-page">
-                <div class="card-header-flex">
+                <div class="card-header-flex" style="margin-bottom: 1.25rem;">
                     <h3>Database Biodata Siswa</h3>
                     <button class="btn-primary" onclick="openAddStudentModal()"><i data-lucide="plus"></i> Tambah Siswa Baru</button>
+                </div>
+                
+                <!-- Search bar for student biodata -->
+                <div style="margin-bottom: 1.25rem; display: flex; gap: 0.75rem; align-items: center; max-width: 400px; background: #fff; border: 1px solid var(--gray-200); border-radius: 8px; padding: 0.5rem 0.75rem; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);">
+                    <i data-lucide="search" style="width: 18px; height: 18px; color: var(--gray-400);"></i>
+                    <input type="text" id="student-search-input" placeholder="Cari nama, ID, atau kelas..." oninput="filterStudentsTableUI()" style="border: none; outline: none; width: 100%; font-size: 0.875rem;">
                 </div>
                 
                 <div class="table-responsive">
@@ -2028,8 +2034,8 @@
     </div>
 
     <!-- DB, logic layer links -->
-    <script src="database.js?v=1.0.9"></script>
-    <script src="app.js?v=1.0.9"></script>
+    <script src="database.js?v=1.1.0"></script>
+    <script src="app.js?v=1.1.0"></script>
 
     <!-- Complete Cache & Service Worker Clear -->
     <script>
