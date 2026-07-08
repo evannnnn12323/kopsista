@@ -3248,6 +3248,7 @@ function renderEndOfDayTellerForm() {
                     <thead>
                         <tr>
                             <th>Shift / Waktu</th>
+                            <th>Waktu Setor</th>
                             <th>Penjualan Sistem</th>
                             <th>Setoran Manual (Fisik)</th>
                             <th>Selisih (Manual - Sistem)</th>
@@ -3267,11 +3268,17 @@ function renderEndOfDayTellerForm() {
         const diff = shiftManualTotal - shiftSystemTotal;
         const users = shiftDeps.map(d => d.username).join(', ') || '-';
         
+        const times = shiftDeps.map(d => {
+            const dateObj = new Date(d.submittedAt || d.updatedAt || d.date);
+            return dateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
+        }).join(', ') || '-';
+        
         let diffColor = diff === 0 ? 'var(--success-color)' : (diff > 0 ? 'var(--warning-color)' : 'var(--error-color)');
         
         breakdownHtml += `
             <tr>
                 <td><strong>${shift}</strong></td>
+                <td>${times}</td>
                 <td>Rp ${shiftSystemTotal.toLocaleString('id-ID')}</td>
                 <td>${shiftDeps.length > 0 ? 'Rp ' + shiftManualTotal.toLocaleString('id-ID') : '<em style="color:var(--text-secondary)">Belum Setor</em>'}</td>
                 <td style="color:${shiftDeps.length > 0 ? diffColor : 'var(--text-secondary)'}; font-weight:bold;">
@@ -3364,11 +3371,17 @@ window.viewEodDetail = function(dateStr) {
         const diff = shiftManualTotal - shiftSystemTotal;
         const users = shiftDeps.map(d => d.username).join(', ') || '-';
         
+        const times = shiftDeps.map(d => {
+            const dateObj = new Date(d.submittedAt || d.updatedAt || d.date);
+            return dateObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
+        }).join(', ') || '-';
+        
         let diffColor = diff === 0 ? 'var(--success-color)' : (diff > 0 ? 'var(--warning-color)' : 'var(--error-color)');
         
         breakdownHtml += `
             <tr>
                 <td><strong>${shift}</strong></td>
+                <td>${times}</td>
                 <td>Rp ${shiftSystemTotal.toLocaleString('id-ID')}</td>
                 <td>${shiftDeps.length > 0 ? 'Rp ' + shiftManualTotal.toLocaleString('id-ID') : '<em style="color:var(--gray-400)">Belum Setor</em>'}</td>
                 <td style="color:${shiftDeps.length > 0 ? diffColor : 'var(--text-secondary)'}; font-weight:bold;">
@@ -3440,6 +3453,7 @@ window.viewEodDetail = function(dateStr) {
                 <thead>
                     <tr>
                         <th>Shift / Waktu</th>
+                        <th>Waktu Setor</th>
                         <th>Penjualan Sistem</th>
                         <th>Setoran Manual (Fisik)</th>
                         <th>Selisih (Manual - Sistem)</th>
