@@ -3812,6 +3812,18 @@ function init2WayProfitBindings() {
 }
 
 window.wipeSalesHistoryUI = function() {
+    const user = state.currentUser;
+    const isAdmin = user && user.role === 'admin';
+    
+    if (!isAdmin) {
+        const pwd = prompt("🔒 KATA SANDI ADMINISTRATOR DIBUTUHKAN\n\nUntuk melakukan tindakan pembersihan data ini, Anda memerlukan otorisasi. Silakan masukkan Password Administrator:");
+        if (!pwd) return;
+        if (!window.db.verifyAdminPassword(pwd)) {
+            showToast("Password Administrator salah atau tidak sah!", "error");
+            return;
+        }
+    }
+
     if (confirm("Apakah Anda yakin ingin mengosongkan seluruh data transaksi penjualan, data barang titipan, setoran shift, absensi petugas, dan penyesuaian keuangan?\n\nTindakan ini tidak bisa dibatalkan dan akan menyegarkan halaman!")) {
         const res = window.db.wipeSalesAndFinancials();
         if (res.success) {
@@ -3826,6 +3838,18 @@ window.wipeSalesHistoryUI = function() {
 };
 
 window.resetAllDataUI = function() {
+    const user = state.currentUser;
+    const isAdmin = user && user.role === 'admin';
+    
+    if (!isAdmin) {
+        const pwd = prompt("🔒 KATA SANDI ADMINISTRATOR DIBUTUHKAN\n\nUntuk melakukan factory reset sistem ini, Anda memerlukan otorisasi. Silakan masukkan Password Administrator:");
+        if (!pwd) return;
+        if (!window.db.verifyAdminPassword(pwd)) {
+            showToast("Password Administrator salah atau tidak sah!", "error");
+            return;
+        }
+    }
+
     if (confirm("⚠️ PERINGATAN CRITICAL!\n\nApakah Anda yakin ingin mereset SELURUH database sistem?\nTindakan ini akan menghapus semua barang, siswa, transaksi, akun kustom, absensi, dan pengaturan sistem kembali seperti pertama kali diinstall (Factory Reset).\n\nINI TIDAK BISA DIBATALKAN!")) {
         const res = window.db.resetAllData();
         if (res.success) {

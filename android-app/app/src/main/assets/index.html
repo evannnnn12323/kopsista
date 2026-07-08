@@ -1170,6 +1170,18 @@
                         </div>
                         <p style="font-size:0.8rem; color:var(--gray-400); text-align:center; margin-top:2rem;">Hak Cipta &copy; 2026 KOPSISTA Tegal. Dilindungi Undang-Undang.</p>
                     </div>
+
+                    <!-- Pembersihan & Reset Sistem (Memerlukan Otorisasi Password Admin) -->
+                    <div class="dashboard-column-card" style="max-width: 600px; margin: 1.5rem auto 0 auto; border: 1px solid #fee2e2; background: #fffafb; padding: 2rem;">
+                        <h3 style="margin-bottom: 1rem; border-bottom: 1px solid #fee2e2; padding-bottom: 0.5rem; color: #dc2626; font-size: 1.15rem; display:flex; align-items:center; gap:0.5rem;"><i data-lucide="shield-alert" style="color:#dc2626; width:20px; height:20px;"></i> Pembersihan &amp; Reset Sistem</h3>
+                        <p style="font-size:0.8rem; color:var(--gray-500); margin-bottom: 1.5rem;">
+                            Fitur pembersihan data ini memerlukan otorisasi tingkat tinggi. Petugas wajib memasukkan kata sandi Administrator untuk mengeksekusi reset.
+                        </p>
+                        <div style="display:flex; flex-direction:column; gap:1rem;">
+                            <button class="btn-danger" onclick="wipeSalesHistoryUI()" style="width:100%; justify-content:center; padding: 0.75rem; display:flex; align-items:center; gap:0.5rem; font-size:0.85rem;"><i data-lucide="trash-2"></i> Kosongkan Data Penjualan &amp; Keuangan</button>
+                            <button class="btn-danger" onclick="resetAllDataUI()" style="width:100%; justify-content:center; padding: 0.75rem; display:flex; align-items:center; gap:0.5rem; background: #dc2626; font-size:0.85rem;"><i data-lucide="refresh-cw"></i> Reset Semua Data ke Bawaan (Factory Reset)</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -2016,8 +2028,8 @@
     </div>
 
     <!-- DB, logic layer links -->
-    <script src="database.js?v=1.0.6"></script>
-    <script src="app.js?v=1.0.6"></script>
+    <script src="database.js?v=1.0.7"></script>
+    <script src="app.js?v=1.0.7"></script>
 
     <!-- Complete Cache & Service Worker Clear -->
     <script>

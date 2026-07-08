@@ -1074,6 +1074,16 @@ class KoperasiDB {
         return { success: true };
     }
 
+    verifyAdminPassword(password) {
+        if (!password) return false;
+        const data = this.getData();
+        const admins = data.users.filter(u => u.role === 'admin' && u.isActive);
+        
+        // Simple synchronous hashing helper hashPassword is declared at the top of database.js
+        const hashed = hashPassword(password);
+        return admins.some(a => a.password === hashed);
+    }
+
     // ============================================================
     // ABSENSI PETUGAS KOPSIS + GAJI OTOMATIS
     // ============================================================
