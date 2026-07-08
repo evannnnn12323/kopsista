@@ -1227,27 +1227,37 @@
                         </div>
                     </div>
 
-                    <!-- Backup and Restore Panel -->
-                    <div class="dashboard-column-card" style="display:flex; flex-direction:column; justify-content:space-between;">
-                        <div>
-                            <h3 style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--gray-100); padding-bottom: 0.5rem;">Backup & Restore Database Lokal</h3>
+                    <!-- Right Column: Tools & Actions -->
+                    <div style="display:flex; flex-direction:column; gap:2rem;">
+                        <!-- Backup and Restore Panel -->
+                        <div class="dashboard-column-card">
+                            <h3 style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--gray-100); padding-bottom: 0.5rem;">Backup &amp; Restore Database Lokal</h3>
                             <p style="font-size:0.85rem; color:var(--gray-500); margin-bottom: 1.5rem;">
                                 Ekspor semua data Koperasi Sekolah (Barang, Siswa, Transaksi, Absensi, Pengaturan, Log) ke dalam file berkas JSON untuk cadangan, atau unggah cadangan tersebut untuk memulihkan keadaan sistem.
                             </p>
-                        </div>
-                        
-                        <div style="display:flex; flex-direction:column; gap:1rem;">
-                            <button class="btn-primary" onclick="exportDatabase()" style="width:100%; justify-content:center; padding: 0.75rem;"><i data-lucide="download"></i> Ekspor / Backup JSON Database</button>
                             
-                            <div class="backup-restore-box" onclick="document.getElementById('import-file-selector').click()">
-                                <i data-lucide="upload-cloud" style="width: 40px; height: 40px; color: var(--primary); margin-bottom: 0.5rem;"></i>
-                                <div style="font-weight:700; font-size:0.9rem;">Impor / Restore Database JSON</div>
-                                <span style="font-size:0.75rem; color:var(--gray-500)">Klik untuk memilih file cadangan (.json)</span>
-                                <input type="file" id="import-file-selector" class="file-input-hidden" accept=".json" onchange="importDatabase(event)">
+                            <div style="display:flex; flex-direction:column; gap:1rem;">
+                                <button class="btn-primary" onclick="exportDatabase()" style="width:100%; justify-content:center; padding: 0.75rem;"><i data-lucide="download"></i> Ekspor / Backup JSON Database</button>
+                                
+                                <div class="backup-restore-box" onclick="document.getElementById('import-file-selector').click()">
+                                    <i data-lucide="upload-cloud" style="width: 40px; height: 40px; color: var(--primary); margin-bottom: 0.5rem;"></i>
+                                    <div style="font-weight:700; font-size:0.9rem;">Impor / Restore Database JSON</div>
+                                    <span style="font-size:0.75rem; color:var(--gray-500)">Klik untuk memilih file cadangan (.json)</span>
+                                    <input type="file" id="import-file-selector" class="file-input-hidden" accept=".json" onchange="importDatabase(event)">
+                                </div>
                             </div>
-                            
-                            <button class="btn-danger" onclick="wipeSalesHistoryUI()" style="width:100%; justify-content:center; padding: 0.75rem; display:flex; align-items:center; gap:0.5rem; margin-top:0.5rem;"><i data-lucide="trash-2"></i> Kosongkan Semua Data Penjualan &amp; Keuangan</button>
-                            <button class="btn-danger" onclick="resetAllDataUI()" style="width:100%; justify-content:center; padding: 0.75rem; display:flex; align-items:center; gap:0.5rem; margin-top:0.5rem; background: #dc2626;"><i data-lucide="refresh-cw"></i> Reset Semua Data ke Bawaan (Factory Reset)</button>
+                        </div>
+
+                        <!-- Reset Data & Sistem Panel -->
+                        <div class="dashboard-column-card">
+                            <h3 style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--gray-100); padding-bottom: 0.5rem; color: #dc2626;">Pembersihan &amp; Reset Sistem</h3>
+                            <p style="font-size:0.85rem; color:var(--gray-500); margin-bottom: 1.5rem;">
+                                Fitur ini digunakan untuk menghapus riwayat penjualan atau mereset seluruh database aplikasi kembali ke setelan pabrik. Tindakan ini tidak bisa dibatalkan!
+                            </p>
+                            <div style="display:flex; flex-direction:column; gap:1rem;">
+                                <button class="btn-danger" onclick="wipeSalesHistoryUI()" style="width:100%; justify-content:center; padding: 0.75rem; display:flex; align-items:center; gap:0.5rem;"><i data-lucide="trash-2"></i> Kosongkan Semua Data Penjualan &amp; Keuangan</button>
+                                <button class="btn-danger" onclick="resetAllDataUI()" style="width:100%; justify-content:center; padding: 0.75rem; display:flex; align-items:center; gap:0.5rem; background: #dc2626;"><i data-lucide="refresh-cw"></i> Reset Semua Data ke Bawaan (Factory Reset)</button>
+                            </div>
                         </div>
                     </div>
                 </div>
