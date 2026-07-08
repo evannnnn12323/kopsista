@@ -515,6 +515,7 @@ class KoperasiDB {
                 const consignment = data.consignments.find(c => c.id === product.consignmentId);
                 if (consignment) {
                     consignment.soldQty = (consignment.soldQty || 0) + cartItem.quantity;
+                    consignment.payoutStatus = "Belum Dibayar";
                     
                     // Log penjualan titipan siswa
                     data.consignmentSales.push({
@@ -607,6 +608,7 @@ class KoperasiDB {
                 const consignment = data.consignments.find(c => c.id === product.consignmentId);
                 if (consignment) {
                     consignment.soldQty = (consignment.soldQty || 0) + item.quantity;
+                    consignment.payoutStatus = "Belum Dibayar";
                     
                     // Log consignment sale
                     data.consignmentSales.push({
@@ -779,14 +781,22 @@ class KoperasiDB {
         const cons = data.consignments.find(c => c.id === id);
         if (!cons) return { success: false, message: "Barang titipan tidak ditemukan." };
         
-        // Remove from consignments
-        data.consignments = data.consignments.filter(c => c.id !== id);
-        // Remove from products as well
-        data.products = data.products.filter(p => p.id !== cons.productId);
-        
-        this.saveData(data);
-        this.addAuditLog("Yanuar", "admin", "Hapus Barang Titipan", `Menghapus barang titipan ${cons.productName} (${id})`);
-        return { success: true };
+        if (cons.soldQty > 0) {
+            // Jika sudah ada penjualan, tidak boleh dihapus dari database agar laporan keuangan & bagi hasil tetap sinkron.
+            // Sebagai gantinya, status diubah menjadi "Selesai" dan produk dihapus dari POS.
+            cons.status = "Selesai";
+            data.products = data.products.filter(p => p.id !== cons.productId);
+            this.saveData(data);
+            this.addAuditLog("Yanuar", "admin", "Selesaikan Titipan", `Menonaktifkan barang titipan ${cons.productName} (${id}) karena sudah ada penjualan`);
+            return { success: true, message: "Barang dinonaktifkan dari POS karena sudah memiliki riwayat penjualan." };
+        } else {
+            // Jika belum ada penjualan, boleh dihapus total
+            data.consignments = data.consignments.filter(c => c.id !== id);
+            data.products = data.products.filter(p => p.id !== cons.productId);
+            this.saveData(data);
+            this.addAuditLog("Yanuar", "admin", "Hapus Barang Titipan", `Menghapus bersih barang titipan ${cons.productName} (${id})`);
+            return { success: true };
+        }
     }
 
     getConsignmentSales() {
@@ -808,6 +818,11 @@ class KoperasiDB {
         const consignment = data.consignments.find(c => c.id === sale.consignmentId);
         if (consignment) {
             consignment.soldQty = Math.max(0, (consignment.soldQty || 0) - sale.quantity);
+            // Kembalikan stok produk di katalog agar tetap sinkron
+            const product = data.products.find(p => p.id === consignment.productId);
+            if (product) {
+                product.stock += sale.quantity;
+            }
         }
         
         // Hapus penjualan dari array

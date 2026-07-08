@@ -2018,8 +2018,11 @@ function renderConsignmentList() {
     }
     tbody.innerHTML = list.map(c => {
         const remaining = c.consignedQty - c.soldQty;
-        const statusBadgeClass = remaining === 0 ? 'absent' : 'present';
         const payoutBadgeClass = c.payoutStatus === 'Lunas' ? 'present' : 'permission';
+        const itemStatusBadge = c.status === 'Selesai' 
+            ? '<span class="badge absent" style="margin-left: 5px; background: #64748b; color: #fff;">Selesai</span>' 
+            : '<span class="badge present" style="margin-left: 5px;">Aktif</span>';
+            
         return `
             <tr>
                 <td><code>${c.id}</code></td>
@@ -2033,9 +2036,9 @@ function renderConsignmentList() {
                 <td style="color:var(--success); font-weight:700;">${c.soldQty} unit</td>
                 <td style="font-weight:700;">${remaining} unit</td>
                 <td><small>${new Date(c.consignmentDate).toLocaleString('id-ID')}</small></td>
-                <td><span class="badge ${payoutBadgeClass}">${c.payoutStatus}</span></td>
+                <td><span class="badge ${payoutBadgeClass}">${c.payoutStatus}</span>${itemStatusBadge}</td>
                 <td>
-                    <button class="btn-action-icon delete" onclick="deleteConsignment('${c.id}')" title="Hapus"><i data-lucide="trash-2"></i></button>
+                    <button class="btn-action-icon delete" onclick="deleteConsignment('${c.id}')" title="Hapus atau Selesaikan"><i data-lucide="trash-2"></i></button>
                 </td>
             </tr>
         `;
@@ -2226,7 +2229,7 @@ window.deleteConsignment = function(id) {
     if (confirm("Apakah Anda yakin ingin menghapus data barang titipan ini beserta produk kasirnya?")) {
         const res = window.db.deleteConsignment(id);
         if (res.success) {
-            showToast("Barang titipan berhasil dihapus.");
+            showToast(res.message || "Barang titipan berhasil dihapus.");
             renderConsignmentTab();
         } else {
             showToast(res.message, "error");
@@ -2493,6 +2496,10 @@ window.renderSiswaConsignment = function() {
         tbodyList.innerHTML = consignments.map(c => {
             const remaining = c.consignedQty - c.soldQty;
             const payoutBadgeClass = c.payoutStatus === 'Lunas' ? 'present' : 'permission';
+            const itemStatusBadge = c.status === 'Selesai' 
+                ? '<span class="badge absent" style="margin-left: 5px; background: #64748b; color: #fff;">Selesai</span>' 
+                : '<span class="badge present" style="margin-left: 5px;">Aktif</span>';
+                
             return `
                 <tr>
                     <td><strong>${c.productName}</strong></td>
@@ -2503,7 +2510,7 @@ window.renderSiswaConsignment = function() {
                     <td style="color:var(--success); font-weight:700;">${c.soldQty} unit</td>
                     <td style="font-weight:700;">${remaining} unit</td>
                     <td><small>${new Date(c.consignmentDate).toLocaleDateString('id-ID')}</small></td>
-                    <td><span class="badge ${payoutBadgeClass}">${c.payoutStatus}</span></td>
+                    <td><span class="badge ${payoutBadgeClass}">${c.payoutStatus}</span>${itemStatusBadge}</td>
                 </tr>
             `;
         }).join('');
@@ -3659,6 +3666,10 @@ window.renderPetugasConsignment = function() {
             tbodyList.innerHTML = consignments.map(c => {
                 const remaining = c.consignedQty - c.soldQty;
                 const payoutBadgeClass = c.payoutStatus === 'Lunas' ? 'present' : 'permission';
+                const itemStatusBadge = c.status === 'Selesai' 
+                    ? '<span class="badge absent" style="margin-left: 5px; background: #64748b; color: #fff;">Selesai</span>' 
+                    : '<span class="badge present" style="margin-left: 5px;">Aktif</span>';
+                    
                 return `
                     <tr>
                         <td><strong>${c.productName}</strong></td>
@@ -3669,7 +3680,7 @@ window.renderPetugasConsignment = function() {
                         <td style="color:var(--success); font-weight:700;">${c.soldQty} unit</td>
                         <td style="font-weight:700;">${remaining} unit</td>
                         <td><small>${new Date(c.consignmentDate).toLocaleDateString('id-ID')}</small></td>
-                        <td><span class="badge ${payoutBadgeClass}">${c.payoutStatus}</span></td>
+                        <td><span class="badge ${payoutBadgeClass}">${c.payoutStatus}</span>${itemStatusBadge}</td>
                     </tr>
                 `;
             }).join('');
