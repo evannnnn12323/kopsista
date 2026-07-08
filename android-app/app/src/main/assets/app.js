@@ -3770,5 +3770,19 @@ window.wipeSalesHistoryUI = function() {
     }
 };
 
+window.resetAllDataUI = function() {
+    if (confirm("⚠️ PERINGATAN CRITICAL!\n\nApakah Anda yakin ingin mereset SELURUH database sistem?\nTindakan ini akan menghapus semua barang, siswa, transaksi, akun kustom, absensi, dan pengaturan sistem kembali seperti pertama kali diinstall (Factory Reset).\n\nINI TIDAK BISA DIBATALKAN!")) {
+        const res = window.db.resetAllData();
+        if (res.success) {
+            showToast("Sistem berhasil direset ke setelan pabrik. Memuat ulang...", "success");
+            setTimeout(() => {
+                location.reload();
+            }, 1500);
+        } else {
+            showToast("Gagal mereset data.", "error");
+        }
+    }
+};
+
 
 

@@ -1053,6 +1053,12 @@ class KoperasiDB {
         return { success: true };
     }
 
+    resetAllData() {
+        localStorage.removeItem(this.storageKey);
+        this.init();
+        return { success: true };
+    }
+
     // ============================================================
     // ABSENSI PETUGAS KOPSIS + GAJI OTOMATIS
     // ============================================================
